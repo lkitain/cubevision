@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const pg = require('pg');
+pg.defaults.ssl = true;
 
 const app = express();
 
