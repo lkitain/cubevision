@@ -5,11 +5,34 @@ import {
   Link,
 } from 'react-router-dom';
 
-const Cubes = () => (
-  <div>
-    <h2>Cubes</h2>
-  </div>
-);
+import Cubes from './Cubes';
+import Cube from './Cube';
+
+class Update extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleSave = this.handleSave.bind(this);
+    }
+    handleSave() {
+        fetch('/api/cube/postcube', {
+            method: 'POST',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify({
+                name: this.name.value,
+                cards: this.cards.value,
+            }),
+        });
+    }
+    render() {
+        return (
+          <div>
+            <input ref={(name) => { this.name = name; }} />
+            <textarea ref={(cards) => { this.cards = cards; }} />
+            <button onClick={this.handleSave}>Save</button>
+          </div>
+        );
+    }
+}
 
 const Missing = () => (
   <div>
@@ -23,12 +46,15 @@ const BasicExample = () => (
       <ul>
         <li><Link to="/cubes">Cubes</Link></li>
         <li><Link to="/missing">Missing</Link></li>
+        <li><Link to="/update">Update</Link></li>
       </ul>
 
       <hr />
 
       <Route path="/cubes" component={Cubes} />
+      <Route path="/cube/:id" component={Cube} />
       <Route path="/missing" component={Missing} />
+      <Route path="/update" component={Update} />
     </div>
   </Router>
 );
