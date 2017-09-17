@@ -7,32 +7,7 @@ import {
 
 import Cubes from './Cubes';
 import Cube from './Cube';
-
-class Update extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleSave = this.handleSave.bind(this);
-    }
-    handleSave() {
-        fetch('/api/cube/postcube', {
-            method: 'POST',
-            headers: new Headers({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify({
-                name: this.name.value,
-                cards: this.cards.value,
-            }),
-        });
-    }
-    render() {
-        return (
-          <div>
-            <input ref={(name) => { this.name = name; }} />
-            <textarea ref={(cards) => { this.cards = cards; }} />
-            <button onClick={this.handleSave}>Save</button>
-          </div>
-        );
-    }
-}
+import Updater from './Updater';
 
 const Missing = () => (
   <div>
@@ -54,7 +29,7 @@ const BasicExample = () => (
       <Route path="/cubes" component={Cubes} />
       <Route path="/cube/:id" component={Cube} />
       <Route path="/missing" component={Missing} />
-      <Route path="/update" component={Update} />
+      <Route path="/update" component={Updater} />
     </div>
   </Router>
 );

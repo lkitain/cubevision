@@ -28,6 +28,7 @@ router.get('/', (request, response) => {
 });
 
 router.post('/postcube', (request, response) => {
+    return;
     console.log(request.body);
     const pool = new pg.Pool({
         connectionString: process.env.DATABASE_URL,
