@@ -43,5 +43,8 @@
     "heroku",
     "express"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mtgsdk": "^0.3.0"
+  }
 }

@@ -43,12 +43,28 @@ export default class CardTable extends React.Component {
                     Name
                   </button>
                 </th>
+                <th>
+                    Image
+                </th>
+                <th>
+                    Mana Cost
+                </th>
+                <th>
+                    Types
+                </th>
+                <th>
+                    Reserved
+                </th>
               </tr>
             </thead>
             <tbody>
               {cards.map(card => (
                 <tr key={card.card_id}>
                   <td>{card.name}</td>
+                  <td>http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid={card.card_id}&type=card</td>
+                  <td>{card.mana_cost}</td>
+                  <td>{card.types}</td>
+                  <td>{card.reserved ? '*': ''}</td>
                 </tr>
               ))}
             </tbody>
