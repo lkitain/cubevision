@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import ManaCost from './ManaCost';
+
 export default class CardTable extends React.Component {
     constructor(props) {
         super(props);
@@ -61,10 +63,18 @@ export default class CardTable extends React.Component {
               {cards.map(card => (
                 <tr key={card.card_id}>
                   <td>{card.name}</td>
-                  <td>http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid={card.card_id}&type=card</td>
-                  <td>{card.mana_cost}</td>
+                  <td>
+                    <a
+                      target="__blank"
+                      rel="noopener noreferrer"
+                      href={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${card.multiverse_id}&type=card`}
+                    >
+                        Image
+                    </a>
+                  </td>
+                  <td><ManaCost manaCost={card.mana_cost} /></td>
                   <td>{card.types}</td>
-                  <td>{card.reserved ? '*': ''}</td>
+                  <td>{card.reserved ? '*' : ''}</td>
                 </tr>
               ))}
             </tbody>
