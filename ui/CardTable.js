@@ -49,13 +49,29 @@ export default class CardTable extends React.Component {
                     Image
                 </th>
                 <th>
+                  <button onClick={this.doSort('mana_cost')}>
                     Mana Cost
+                  </button>
                 </th>
                 <th>
+                  <button onClick={this.doSort('cmc')}>
+                    CMC
+                  </button>
+                </th>
+                <th>
+                  <button onClick={this.doSort('color')}>
+                    Color
+                  </button>
+                </th>
+                <th>
+                  <button onClick={this.doSort('types')}>
                     Types
+                  </button>
                 </th>
                 <th>
+                  <button onClick={this.doSort('reserved')}>
                     Reserved
+                  </button>
                 </th>
               </tr>
             </thead>
@@ -73,6 +89,8 @@ export default class CardTable extends React.Component {
                     </a>
                   </td>
                   <td><ManaCost manaCost={card.mana_cost} /></td>
+                  <td>{card.cmc}</td>
+                  <td>{card.color}</td>
                   <td>{card.types}</td>
                   <td>{card.reserved ? '*' : ''}</td>
                 </tr>

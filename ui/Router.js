@@ -9,6 +9,7 @@ import Cubes from './Cubes';
 import Cube from './Cube';
 import Updater from './Updater';
 import Missing from './Missing';
+import AcquireCard from './AcquireCard';
 import { OUR_CUBE, OUR_BINDER } from './consts';
 
 const BasicExample = () => (
@@ -20,6 +21,7 @@ const BasicExample = () => (
         <li><Link to="/cubes">Cubes</Link></li>
         <li><Link to="/missing">Missing</Link></li>
         <li><Link to="/update">Update</Link></li>
+        <li><Link to="/acquire">Acquire</Link></li>
       </ul>
 
       <hr />
@@ -28,6 +30,7 @@ const BasicExample = () => (
       <Route path="/cube/:id" component={Cube} />
       <Route path="/missing" component={Missing} />
       <Route path="/update" component={Updater} />
+      <Route path="/acquire" component={AcquireCard} />
     </div>
   </Router>
 );

@@ -2,6 +2,10 @@ const express = require('express');
 const pg = require('pg');
 const mtg = require('mtgsdk');
 
+const {
+    acquireCard,
+} = require('./postgres');
+
 pg.defaults.ssl = true;
 
 const router = express.Router();
@@ -23,7 +27,21 @@ router.get('/', (request, response) => {
     });
 });
 
-router.get('/update', (request, response) =>  {
+router.post('/acquire', (request, response) => {
+    return;
+    const pool = new pg.Pool({
+        connectionString: process.env.DATABASE_URL,
+    });
+    const cardId = request.body.cardId;
+    pool.connect((connErr, client, done) => {
+        acquireCard(cardId, client, () => {
+            response.send(true);
+            done();
+        });
+    });
+});
+
+router.get('/update', (request, response) => {
     const pool = new pg.Pool({
         connectionString: process.env.DATABASE_URL,
     });
@@ -64,7 +82,7 @@ router.get('/update', (request, response) =>  {
                                 }
                             );
                             // console.log(query);
-                        })
+                        });
                 })).then(() => response.send(found));
             }
             done();

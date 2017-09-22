@@ -1,2 +1,4 @@
-export const OUR_CUBE = 8;
-export const OUR_BINDER = 9;
+module.exports = {
+    OUR_CUBE: 8,
+    OUR_BINDER: 9,
+};
