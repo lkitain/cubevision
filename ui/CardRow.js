@@ -7,6 +7,14 @@ import Sets from './Sets';
 import Replacements from './Replacements';
 import { LAST_CUBE } from './consts';
 
+const standardSets = [
+    'KAL',
+    'AER',
+    'AKH',
+    'W17',
+    'HOU',
+];
+
 const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
     if (isHeader) {
         return (
@@ -54,8 +62,19 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
             </tr>
         );
     }
+    if (card.name === 'Gideon of the Trials') {
+        console.log(card);
+    }
+    const inStandard = JSON.parse(card.printings)
+        .reduce((init, set) => init || standardSets.indexOf(set.set) !== -1, false);
     return (
-        <tr style={{ height: 31, backgroundColor: inCurrent ? 'white' : 'lightgrey' }}>
+        <tr
+          style={{
+              height: 31,
+              backgroundColor: inCurrent ? 'white' : 'lightgrey',
+              color: inStandard ? 'chocolate' : 'black',
+          }}
+        >
           <td>{card.name}</td>
           <td>
             <a
