@@ -84,7 +84,7 @@ router.get('/update', (request, response) => {
         connectionString: process.env.DATABASE_URL,
     });
     pool.connect((connErr, client, done) => {
-        client.query('select * from cards where color like $1 and color not like $2 and mana_cost like $3 limit 30;', ['%B%', '%U%', '%U%'], (err, result) => {
+        client.query('select * from cards where printings is null limit 30;', (err, result) => {
             console.log(result);
             if (err) {
                 response.send(`Error ${err}`);
@@ -98,9 +98,18 @@ router.get('/update', (request, response) => {
                             console.log(cards.length);
                             console.log(row.name);
                             let card = null;
+                            const printings = [];
                             cards.forEach((c) => {
-                                if (c.name === row.name) {
+                                if (c.name === splitName) {
                                     card = c;
+                                    const copy = {
+                                        rarity: card.rarity[0],
+                                        set: card.set,
+                                    };
+                                    if (Object.hasOwnProperty.call(card, 'multiverseid')) {
+                                        copy.multiverseid = card.multiverseid;
+                                    }
+                                    printings.push(copy)
                                 }
                             });
                             console.log(card.name);
@@ -117,8 +126,8 @@ router.get('/update', (request, response) => {
                             }
 
                             client.query(
-                                'update cards set cmc = $1, mana_cost = $2, reserved = $3, color = $5, types = $6, multiverse_id = $7 where card_id = $4',
-                                [card.cmc, card.manaCost, card.reserved || false, row.card_id, colors, card.types.join(','), card.multiverseid],
+                                'update cards set cmc = $1, mana_cost = $2, reserved = $3, color = $5, types = $6, multiverse_id = $7, printings = $8 where card_id = $4',
+                                [card.cmc, card.manaCost, card.reserved || false, row.card_id, colors, card.types.join(','), card.multiverseid, JSON.stringify(printings)],
                                 (inErr) => {
                                     if (inErr) {
                                         throw new Error(inErr);
@@ -127,7 +136,9 @@ router.get('/update', (request, response) => {
                             );
                             // console.log(query);
                         });
-                })).then(() => response.send(found));
+                }))
+                    .then(() => response.send(found))
+                    .catch((err) => response.send(err));
             }
             done();
         });

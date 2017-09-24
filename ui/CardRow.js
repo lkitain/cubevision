@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import ManaCost from './ManaCost';
+import Sets from './Sets';
 import Replacements from './Replacements';
 import { LAST_CUBE } from './consts';
 
@@ -43,6 +44,9 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
                   Reserved
                 </button>
               </th>
+              <th>
+                Sets
+              </th>
               {canEdit &&
               <th>
                 Remove
@@ -67,6 +71,9 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
           <td>{card.color}</td>
           <td>{card.types.replace(',', ' ')}</td>
           <td>{card.reserved ? '*' : ''}</td>
+          <td>
+            <Sets printings={JSON.parse(card.printings)} />
+          </td>
           {canEdit &&
           <th>
             <Replacements cardId={card.card_id} />
