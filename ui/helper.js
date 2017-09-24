@@ -14,4 +14,14 @@ const getMissing = (state) => {
     return missingCards;
 };
 
-export { getMissing };
+const sort = (field = 'name', directionIn = false) => (a, b) => {
+    const direction = directionIn ? 1 : -1;
+    if (a[field] < b[field]) {
+        return direction;
+    } else if (a[field] > b[field]) {
+        return direction * -1;
+    }
+    return 0;
+};
+
+export { getMissing, sort };

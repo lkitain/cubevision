@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import CardTable from './CardTable';
+import { OUR_CUBE } from './consts';
 
 const Cube = ({ cube, cards }) => (
   <div>
     <h2>{cube.name}</h2>
-    <CardTable cards={cards} />
+    <CardTable cards={cards} canEdit={cube.cube_id === OUR_CUBE} />
   </div>
 );
 
@@ -21,7 +22,7 @@ Cube.propTypes = {
         params: PropTypes.shape({
             id: PropTypes.string.isRequired,
         }).isRequired,
-    }),
+    }).isRequired,
     cube: PropTypes.shape({
         name: PropTypes.string,
     }),

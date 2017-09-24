@@ -3,21 +3,21 @@ import PropTypes from 'prop-types';
 
 const ManaCost = ({ manaCost }) => {
     if (manaCost !== '' && manaCost !== null) {
-        const re = /{([0-9/WRGBUCX]+)}/;
-        console.log(manaCost);
-        const symbols = manaCost.split(re).filter(x => x !== '');
+        const re = /{([0-9/WRGBUCXP]+)}/;
+        const symbols = manaCost.split(re).filter(x => x !== '').map(y => y.replace('/', ''));
         return (
           <div>
-            {symbols.map(x => (
+            {symbols.map((x, i) => (
               <img
+                key={i}
+                alt={x}
                 src={`http://gatherer.wizards.com/Handlers/Image.ashx?size=medium&name=${x}&type=symbol`}
               />
             ))}
           </div>
         );
-    } else {
-        return null;
     }
+    return null;
 };
 
 ManaCost.defaultProps = {
@@ -25,7 +25,7 @@ ManaCost.defaultProps = {
 };
 
 ManaCost.propTypes = {
-    manaCost: PropTypes.string
+    manaCost: PropTypes.string,
 };
 
 export default ManaCost;

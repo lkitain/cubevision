@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import ManaCost from './ManaCost';
+import CardRow from './CardRow';
+import { sort } from './helper';
 
 export default class CardTable extends React.Component {
     constructor(props) {
@@ -11,89 +13,33 @@ export default class CardTable extends React.Component {
             sort: null,
             direction: false,
         };
+        this.doSort = this.doSort.bind(this);
     }
     doSort(field) {
+        const self = this;
         return () =>
-            this.setState({
+            self.setState({
                 sort: field,
-                direction: this.state.sort === field ?
-                    !this.state.direction : this.state.direction,
+                direction: self.state.sort === field ?
+                    !self.state.direction : self.state.direction,
             });
     }
     sort() {
         if (this.state.sort === null) {
             return this.props.cards;
         }
-        return this.props.cards.sort((a, b) => {
-            const direction = this.state.direction ? 1 : -1;
-            if (a[this.state.sort] < b[this.state.sort]) {
-                return direction;
-            } else if (a[this.state.sort] > b[this.state.sort]) {
-                return direction * -1;
-            }
-            return 0;
-        });
+        return this.props.cards.sort(sort(this.state.sort, this.state.direction));
     }
     render() {
         const cards = this.sort();
         return (
           <table>
             <thead>
-              <tr>
-                <th>
-                  <button onClick={this.doSort('name')}>
-                    Name
-                  </button>
-                </th>
-                <th>
-                    Image
-                </th>
-                <th>
-                  <button onClick={this.doSort('mana_cost')}>
-                    Mana Cost
-                  </button>
-                </th>
-                <th>
-                  <button onClick={this.doSort('cmc')}>
-                    CMC
-                  </button>
-                </th>
-                <th>
-                  <button onClick={this.doSort('color')}>
-                    Color
-                  </button>
-                </th>
-                <th>
-                  <button onClick={this.doSort('types')}>
-                    Types
-                  </button>
-                </th>
-                <th>
-                  <button onClick={this.doSort('reserved')}>
-                    Reserved
-                  </button>
-                </th>
-              </tr>
+              <CardRow isHeader doSort={this.doSort} canEdit={this.props.canEdit} />
             </thead>
             <tbody>
               {cards.map(card => (
-                <tr key={card.card_id}>
-                  <td>{card.name}</td>
-                  <td>
-                    <a
-                      target="__blank"
-                      rel="noopener noreferrer"
-                      href={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${card.multiverse_id}&type=card`}
-                    >
-                        Image
-                    </a>
-                  </td>
-                  <td><ManaCost manaCost={card.mana_cost} /></td>
-                  <td>{card.cmc}</td>
-                  <td>{card.color}</td>
-                  <td>{card.types}</td>
-                  <td>{card.reserved ? '*' : ''}</td>
-                </tr>
+                <CardRow key={card.card_id} card={card} canEdit={this.props.canEdit} />
               ))}
             </tbody>
           </table>
@@ -103,6 +49,7 @@ export default class CardTable extends React.Component {
 
 CardTable.defaultProps = {
     cards: [],
+    canEdit: false,
 };
 
 CardTable.propTypes = {
@@ -110,4 +57,5 @@ CardTable.propTypes = {
         card_id: PropTypes.number,
         name: PropTypes.string,
     })),
+    canEdit: PropTypes.bool,
 };

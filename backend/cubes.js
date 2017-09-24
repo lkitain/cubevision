@@ -45,9 +45,7 @@ router.post('/postcube', (request, response) => {
             }))
         ).then(() =>
             Promise.all(
-                out.map(cardId => new Promise((resolve) => {
-                    addCardToCube(request.body.name, cardId, client, resolve);
-                }))
+                out.map(cardId => addCardToCube(request.body.name, cardId, client))
             )
         )
         .then(() => {

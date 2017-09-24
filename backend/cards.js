@@ -4,7 +4,14 @@ const mtg = require('mtgsdk');
 
 const {
     acquireCard,
+    addCardToCube,
+    checkCardInCube,
+    removeCardFromCube,
+    startTransaction,
+    commitTransaction,
+    rollbackTransaction,
 } = require('./postgres');
+const constants = require('../ui/consts');
 
 pg.defaults.ssl = true;
 
@@ -28,7 +35,6 @@ router.get('/', (request, response) => {
 });
 
 router.post('/acquire', (request, response) => {
-    return;
     const pool = new pg.Pool({
         connectionString: process.env.DATABASE_URL,
     });
@@ -41,12 +47,45 @@ router.post('/acquire', (request, response) => {
     });
 });
 
+
+router.post('/replace', (request, response) => {
+    const pool = new pg.Pool({
+        connectionString: process.env.DATABASE_URL,
+    });
+    const newCardId = request.body.newCardId;
+    const oldCardId = request.body.oldCardId;
+    pool.connect((connErr, client, done) => {
+        Promise.all([
+            checkCardInCube(newCardId, constants.OUR_BINDER),
+            checkCardInCube(oldCardId, constants.OUR_CUBE),
+        ])
+            .then(() => startTransaction(client))
+            .then(Promise.all([
+                addCardToCube(constants.OUR_CUBE, newCardId, client),
+                addCardToCube(constants.OUR_BINDER, oldCardId, client),
+                removeCardFromCube(constants.OUR_BINDER, newCardId, client),
+                removeCardFromCube(constants.OUR_CUBE, oldCardId, client),
+            ]))
+            .then(() => commitTransaction(client))
+            .catch((err) => {
+                console.log(err);
+                return rollbackTransaction(client);
+            })
+            .then((json) => {
+                response.send(json);
+                done();
+            });
+    });
+});
+
 router.get('/update', (request, response) => {
+    console.log('asdf');
     const pool = new pg.Pool({
         connectionString: process.env.DATABASE_URL,
     });
     pool.connect((connErr, client, done) => {
-        client.query('select * from cards where multiverse_id is null limit 30;', (err, result) => {
+        client.query('select * from cards where color like $1 and color not like $2 and mana_cost like $3 limit 30;', ['%B%', '%U%', '%U%'], (err, result) => {
+            console.log(result);
             if (err) {
                 response.send(`Error ${err}`);
             } else {
@@ -69,7 +108,12 @@ router.get('/update', (request, response) => {
 
                             let colors = 'C';
                             if (Object.hasOwnProperty.call(card, 'colors')) {
-                                colors = card.colors.reduce((out, c) => `${out}${c[0]}`, '');
+                                colors = card.colors.reduce((out, c) => {
+                                    if (c === 'Blue') {
+                                        return `${out}U`;
+                                    }
+                                    return `${out}${c[0]}`;
+                                }, '');
                             }
 
                             client.query(
