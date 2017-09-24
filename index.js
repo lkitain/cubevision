@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.resolve(__dirname, './public')));
 
 app.use('/api/cube', cubes);
-// app.use('/api/card', cards);
+app.use('/api/card', cards);
 
 app.use((req, res) => {
     res.sendFile(path.resolve(__dirname, './public/index.html'));
