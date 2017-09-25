@@ -58,9 +58,21 @@ const removeCardFromCube = (cubeId, cardId, client) =>
         });
     });
 
-const acquireCard = (cardId, client, cb) => {
-    return addCardToCube(constants.OUR_BINDER, cardId, client, cb);
-};
+const acquireCard = (cardId, client) =>
+    addCardToCube(constants.OUR_BINDER, cardId, client);
+
+const setVersion = (cardId, multiverseid, client) =>
+    new Promise((resolve, reject) => {
+        const query = 'update cards set owned_multiverseid = $2 where card_id = $1';
+        client.query(query, [cardId, multiverseid], (err) => {
+            console.log(err);
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
 
 const checkCardInCube = (cardId, cubeId, client) =>
     new Promise((resolve, reject) => {
@@ -113,6 +125,7 @@ module.exports = {
     checkCardInCube,
     findOrCreateCard,
     removeCardFromCube,
+    setVersion,
 
     startTransaction,
     commitTransaction,

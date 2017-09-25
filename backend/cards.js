@@ -7,6 +7,7 @@ const {
     addCardToCube,
     checkCardInCube,
     removeCardFromCube,
+    setVersion,
     startTransaction,
     commitTransaction,
     rollbackTransaction,
@@ -33,6 +34,27 @@ router.get('/', (request, response) => {
         });
     });
 });
+
+// router.post('/setversion', (request, response) => {
+//     console.log('setversion')
+//     const pool = new pg.Pool({
+//         connectionString: process.env.DATABASE_URL,
+//     });
+//     const cardId = request.body.cardId;
+//     const multiverseid = request.body.multiverseid;
+//     console.log(request.body);
+//     pool.connect((connErr, client, done) => {
+//         setVersion(cardId, multiverseid, client)
+//             .then(() => {
+//                 response.send(true);
+//                 done();
+//             })
+//             .catch((err) => {
+//                 response.send(err);
+//                 done();
+//             });
+//     });
+// });
 
 // router.post('/acquire', (request, response) => {
 //     const pool = new pg.Pool({

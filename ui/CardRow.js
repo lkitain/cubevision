@@ -4,16 +4,10 @@ import { connect } from 'react-redux';
 
 import ManaCost from './ManaCost';
 import Sets from './Sets';
+import OwnedSet from './OwnedSet';
 import Replacements from './Replacements';
+import { isInStandard } from './helper';
 import { LAST_CUBE } from './consts';
-
-const standardSets = [
-    'KAL',
-    'AER',
-    'AKH',
-    'W17',
-    'HOU',
-];
 
 const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
     if (isHeader) {
@@ -62,17 +56,12 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
             </tr>
         );
     }
-    if (card.name === 'Gideon of the Trials') {
-        console.log(card);
-    }
-    const inStandard = JSON.parse(card.printings)
-        .reduce((init, set) => init || standardSets.indexOf(set.set) !== -1, false);
     return (
         <tr
           style={{
               height: 31,
               backgroundColor: inCurrent ? 'white' : 'lightgrey',
-              color: inStandard ? 'chocolate' : 'black',
+              color: isInStandard(card) ? 'chocolate' : 'black',
           }}
         >
           <td>{card.name}</td>
@@ -80,9 +69,15 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
             <a
               target="__blank"
               rel="noopener noreferrer"
-              href={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${card.multiverse_id}&type=card`}
+              href={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${card.owned_multiverseid || card.multiverse_id}&type=card`}
             >
-                Image
+              {card.owned_multiverseid ? (
+                <OwnedSet
+                  printings={JSON.parse(card.printings)}
+                  ownedId={card.owned_multiverseid}
+                  cardId={card.card_id}
+                />
+              ) : 'Image'}
             </a>
           </td>
           <td><ManaCost manaCost={card.mana_cost} /></td>
@@ -91,7 +86,11 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
           <td>{card.types.replace(',', ' ')}</td>
           <td>{card.reserved ? '*' : ''}</td>
           <td>
-            <Sets printings={JSON.parse(card.printings)} />
+            <Sets
+              printings={JSON.parse(card.printings)}
+              ownedId={card.owned_multiverseid}
+              cardId={card.card_id}
+            />
           </td>
           {canEdit &&
           <th>

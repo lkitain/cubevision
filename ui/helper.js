@@ -1,5 +1,18 @@
 import { OUR_CUBE, OUR_BINDER } from './consts';
 
+const standardSets = [
+    'KAL',
+    'AER',
+    'AKH',
+    'W17',
+    'HOU',
+    'XLN',
+    'RIX',
+];
+
+const isInStandard = card => JSON.parse(card.printings)
+    .reduce((init, set) => init || standardSets.indexOf(set.set) !== -1, false);
+
 const getMissing = (state) => {
     let ownedCards = [];
     let missingCards = [];
@@ -24,4 +37,4 @@ const sort = (field = 'name', directionIn = false) => (a, b) => {
     return 0;
 };
 
-export { getMissing, sort };
+export { getMissing, isInStandard, sort };

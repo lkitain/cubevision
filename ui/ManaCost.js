@@ -6,7 +6,7 @@ const ManaCost = ({ manaCost }) => {
         const re = /{([0-9/WRGBUCXP]+)}/;
         const symbols = manaCost.split(re).filter(x => x !== '').map(y => y.replace('/', ''));
         return (
-          <div>
+          <div style={{ whiteSpace: 'nowrap' }}>
             {symbols.map((x, i) => (
               <img
                 key={i}
