@@ -86,6 +86,20 @@ const checkCardInCube = (cardId, cubeId, client) =>
         });
     });
 
+const updatePrintings = (card, cardId, colors, printings, client) =>
+    new Promise((resolve, reject) => {
+        client.query(
+            'update cards set cmc = $1, mana_cost = $2, reserved = $3, color = $5, types = $6, multiverse_id = $7, printings = $8 where card_id = $4',
+            [card.cmc, card.manaCost, card.reserved || false, cardId, colors, card.types.join(','), card.multiverseid, JSON.stringify(printings)],
+            (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+    });
+
 const startTransaction = client =>
     new Promise((resolve, reject) => {
         client.query('BEGIN', (err) => {
@@ -126,6 +140,7 @@ module.exports = {
     findOrCreateCard,
     removeCardFromCube,
     setVersion,
+    updatePrintings,
 
     startTransaction,
     commitTransaction,

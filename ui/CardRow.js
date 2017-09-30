@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { cardType } from './propTypes';
 import ManaCost from './ManaCost';
 import Sets from './Sets';
 import OwnedSet from './OwnedSet';
@@ -13,89 +14,91 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
     if (isHeader) {
         return (
             <tr>
-              <th>
-                <button onClick={doSort('name')}>
-                  Name
-                </button>
-              </th>
-              <th>
-                  Image
-              </th>
-              <th>
-                <button onClick={doSort('mana_cost')}>
-                  Mana Cost
-                </button>
-              </th>
-              <th>
-                <button onClick={doSort('cmc')}>
-                  CMC
-                </button>
-              </th>
-              <th>
-                <button onClick={doSort('color')}>
-                  Color
-                </button>
-              </th>
-              <th>
-                <button onClick={doSort('types')}>
-                  Types
-                </button>
-              </th>
-              <th>
-                <button onClick={doSort('reserved')}>
-                  Reserved
-                </button>
-              </th>
-              <th>
-                Sets
-              </th>
-              {canEdit &&
-              <th>
-                Remove
-              </th>}
+                <th>
+                    <button onClick={doSort('name')}>
+                        Name
+                    </button>
+                </th>
+                <th>
+                    <button onClick={doSort('owned_multiverseid')}>
+                        Image
+                    </button>
+                </th>
+                <th>
+                    <button onClick={doSort('mana_cost')}>
+                        Mana Cost
+                    </button>
+                </th>
+                <th>
+                    <button onClick={doSort('cmc')}>
+                        CMC
+                    </button>
+                </th>
+                <th>
+                    <button onClick={doSort('color')}>
+                        Color
+                    </button>
+                </th>
+                <th>
+                    <button onClick={doSort('types')}>
+                        Types
+                    </button>
+                </th>
+                <th>
+                    <button onClick={doSort('reserved')}>
+                        Reserved
+                    </button>
+                </th>
+                <th>
+                    Sets
+                </th>
+                {canEdit &&
+                <th>
+                    Remove
+                </th>}
             </tr>
         );
     }
     return (
         <tr
-          style={{
-              height: 31,
-              backgroundColor: inCurrent ? 'white' : 'lightgrey',
-              color: isInStandard(card) ? 'chocolate' : 'black',
-          }}
+            style={{
+                height: 31,
+                backgroundColor: inCurrent ? 'white' : 'lightgrey',
+                color: isInStandard(card) ? 'chocolate' : 'black',
+            }}
         >
-          <td>{card.name}</td>
-          <td>
-            <a
-              target="__blank"
-              rel="noopener noreferrer"
-              href={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${card.owned_multiverseid || card.multiverse_id}&type=card`}
-            >
-              {card.owned_multiverseid ? (
-                <OwnedSet
-                  printings={JSON.parse(card.printings)}
-                  ownedId={card.owned_multiverseid}
-                  cardId={card.card_id}
+            <td>{card.name}</td>
+            <td>
+                <a
+                    target="__blank"
+                    rel="noopener noreferrer"
+                    href={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${card.owned_multiverseid || card.multiverse_id}&type=card`}
+                >
+                    {card.owned_multiverseid ? (
+                        <OwnedSet
+                            printings={JSON.parse(card.printings)}
+                            ownedId={card.owned_multiverseid}
+                            cardId={card.card_id}
+                        />
+                    ) : 'Image'}
+                </a>
+            </td>
+            <td><ManaCost manaCost={card.mana_cost} /></td>
+            <td>{card.cmc}</td>
+            <td>{card.color}</td>
+            <td>{card.types.replace(',', ' ')}</td>
+            <td>{card.reserved ? '*' : ''}</td>
+            <td>
+                <Sets
+                    printings={JSON.parse(card.printings)}
+                    ownedId={card.owned_multiverseid}
+                    cardId={card.card_id}
                 />
-              ) : 'Image'}
-            </a>
-          </td>
-          <td><ManaCost manaCost={card.mana_cost} /></td>
-          <td>{card.cmc}</td>
-          <td>{card.color}</td>
-          <td>{card.types.replace(',', ' ')}</td>
-          <td>{card.reserved ? '*' : ''}</td>
-          <td>
-            <Sets
-              printings={JSON.parse(card.printings)}
-              ownedId={card.owned_multiverseid}
-              cardId={card.card_id}
-            />
-          </td>
-          {canEdit &&
-          <th>
-            <Replacements cardId={card.card_id} />
-          </th>}
+            </td>
+            {canEdit &&
+            <th>
+                <Replacements cardId={card.card_id} />
+            </th>}
         </tr>
     );
 };
@@ -110,17 +113,11 @@ CardRow.defaultProps = {
 };
 
 CardRow.propTypes = {
-    card: PropTypes.shape({
-        card_id: PropTypes.number,
-        name: PropTypes.string,
-    }),
+    card: cardType,
     doSort: PropTypes.func,
     isHeader: PropTypes.bool,
-    cubes: PropTypes.arrayOf(PropTypes.shape({
-        cube_id: PropTypes.number,
-        name: PropTypes.string,
-    })),
     inCurrent: PropTypes.bool,
+    canEdit: PropTypes.bool,
 };
 
 const mapStateToProps = (state, props) => {
@@ -137,7 +134,6 @@ const mapStateToProps = (state, props) => {
         });
     }
     return ({
-        cubes,
         inCurrent,
     });
 };

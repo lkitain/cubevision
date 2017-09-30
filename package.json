@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node index.js",
     "start-dev": "DATABASE_URL=$(heroku config:get DATABASE_URL -a cubevision) node index.js",
-    "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress"
+    "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress",
+    "lint": "eslint ."
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
@@ -17,12 +18,14 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "body-parser": "^1.17.2",
+    "es6-promise": "^4.1.1",
     "eslint": "^4.6.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.3.0",
     "express": "4.15.4",
+    "isomorphic-fetch": "^2.2.1",
     "mtgsdk": "^0.3.0",
     "pg": "^7.2.0",
     "prop-types": "^15.5.10",

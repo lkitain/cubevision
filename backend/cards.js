@@ -7,6 +7,7 @@ const {
     addCardToCube,
     checkCardInCube,
     removeCardFromCube,
+    updatePrintings,
     setVersion,
     startTransaction,
     commitTransaction,
@@ -35,26 +36,26 @@ router.get('/', (request, response) => {
     });
 });
 
-// router.post('/setversion', (request, response) => {
-//     console.log('setversion')
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
-//     const cardId = request.body.cardId;
-//     const multiverseid = request.body.multiverseid;
-//     console.log(request.body);
-//     pool.connect((connErr, client, done) => {
-//         setVersion(cardId, multiverseid, client)
-//             .then(() => {
-//                 response.send(true);
-//                 done();
-//             })
-//             .catch((err) => {
-//                 response.send(err);
-//                 done();
-//             });
-//     });
-// });
+router.post('/setversion', (request, response) => {
+    console.log('setversion')
+    const pool = new pg.Pool({
+        connectionString: process.env.DATABASE_URL,
+    });
+    const cardId = request.body.cardId;
+    const multiverseid = request.body.multiverseid;
+    console.log(request.body);
+    pool.connect((connErr, client, done) => {
+        setVersion(cardId, multiverseid, client)
+            .then(() => {
+                response.send(true);
+                done();
+            })
+            .catch((err) => {
+                response.send(err);
+                done();
+            });
+    });
+});
 
 // router.post('/acquire', (request, response) => {
 //     const pool = new pg.Pool({
@@ -100,71 +101,102 @@ router.get('/', (request, response) => {
 //     });
 // });
 //
-// router.get('/update', (request, response) => {
-//     console.log('asdf');
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
-//     pool.connect((connErr, client, done) => {
-//         client.query('select * from cards where printings is null limit 30;', (err, result) => {
-//             console.log(result);
-//             if (err) {
-//                 response.send(`Error ${err}`);
-//             } else {
-//                 const found = [];
-//                 Promise.all(result.rows.map((row) => {
-//                     const splitName = row.name.split(' // ')[0];
-//                     return mtg.card
-//                         .where({ name: splitName })
-//                         .then((cards) => {
-//                             console.log(cards.length);
-//                             console.log(row.name);
-//                             let card = null;
-//                             const printings = [];
-//                             cards.forEach((c) => {
-//                                 if (c.name === splitName) {
-//                                     card = c;
-//                                     const copy = {
-//                                         rarity: card.rarity[0],
-//                                         set: card.set,
-//                                     };
-//                                     if (Object.hasOwnProperty.call(card, 'multiverseid')) {
-//                                         copy.multiverseid = card.multiverseid;
-//                                     }
-//                                     printings.push(copy)
-//                                 }
-//                             });
-//                             console.log(card.name);
-//                             found.push(row);
-//
-//                             let colors = 'C';
-//                             if (Object.hasOwnProperty.call(card, 'colors')) {
-//                                 colors = card.colors.reduce((out, c) => {
-//                                     if (c === 'Blue') {
-//                                         return `${out}U`;
-//                                     }
-//                                     return `${out}${c[0]}`;
-//                                 }, '');
-//                             }
-//
-//                             client.query(
-//                                 'update cards set cmc = $1, mana_cost = $2, reserved = $3, color = $5, types = $6, multiverse_id = $7, printings = $8 where card_id = $4',
-//                                 [card.cmc, card.manaCost, card.reserved || false, row.card_id, colors, card.types.join(','), card.multiverseid, JSON.stringify(printings)],
-//                                 (inErr) => {
-//                                     if (inErr) {
-//                                         throw new Error(inErr);
-//                                     }
-//                                 }
-//                             );
-//                             // console.log(query);
-//                         });
-//                 }))
-//                     .then(() => response.send(found))
-//                     .catch((err) => response.send(err));
-//             }
-//             done();
-//         });
-//     });
-// });
+router.get('/update', (request, response) => {
+    console.log('asdf');
+    const pool = new pg.Pool({
+        connectionString: process.env.DATABASE_URL,
+    });
+    pool.connect((connErr, client, done) => {
+        client.query('select * from cards where printings is null limit 30;', (err, result) => {
+            // console.log(result);
+            if (err) {
+                response.send(`Error ${err}`);
+            } else {
+                const found = [];
+                Promise.all(
+                    result.rows.map(row =>
+                        getData(row, {})
+                            .then(data => {
+                                console.log('sql', data);
+                                updatePrintings(data.card, data.cardId, data.colors, data.printings, client);
+                            })
+                            .catch(err => response.send(err))
+                        )
+                )
+                    .then(() => response.send(success))
+                    .catch(err => response.send(err));
+            }
+            done();
+        });
+    });
+});
+
+function getData(row) {
+    const splitName = row.name.split(' // ');
+    return Promise.all(splitName.map(cName =>
+        new Promise((resolve) => {
+            console.log(cName);
+            const data = {
+                printings: [],
+            };
+            let totalPrints = 1000000;
+            const ev = mtg.card
+                .all({ name: cName });
+            ev.on('data', (card) => {
+                    // console.log('data');
+                    // // console.log(card);
+                    // console.log(cName);
+                    // console.log(row.name);
+                    const printings = data.printings;
+                    if (card.name === cName) {
+                        // console.log(card.set);
+                        const copy = {
+                            rarity: card.rarity[0],
+                            set: card.set,
+                        };
+                        if (Object.hasOwnProperty.call(card, 'multiverseid')) {
+                            copy.multiverseid = card.multiverseid;
+                        }
+                        printings.push(copy);
+                        totalPrints = card.printings.length;
+                        // console.log(totalPrints);
+                    } else {
+                        return;
+                    }
+
+                    let colors = 'C';
+                    if (Object.hasOwnProperty.call(card, 'colors')) {
+                        colors = card.colors.reduce((out, c) => {
+                            if (c === 'Blue') {
+                                return `${out}U`;
+                            }
+                            return `${out}${c[0]}`;
+                        }, '');
+                    }
+                    data.card = card;
+                    data.colors = colors;
+                    data.printings = printings;
+                    data.cardId = row.card_id;
+                });
+            ev.on('end', () => resolve(data));
+            ev.on('err', (err) => { console.log('err', err); });
+        })))
+        .then((data) => {
+            const outData = data[0];
+            data.forEach((curr, i) => {
+                const colors = outData.colors.split();
+                curr.colors.split().forEach((c) => {
+                    if (colors.indexOf(c) === -1) {
+                        colors.push(c);
+                    }
+                });
+                if (i > 0) {
+                    outData.card.manaCost = `${outData.card.manaCost} // ${curr.card.manaCost}`
+                }
+                outData.colors = colors.join('');
+            });
+            return outData;
+        });
+}
 
 module.exports = router;

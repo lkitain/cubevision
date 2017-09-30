@@ -6,10 +6,10 @@ import CardTable from './CardTable';
 import { getMissing } from './helper';
 
 const Missing = ({ cards }) => (
-  <div>
-    <h2>Missing ({cards.length})</h2>
-    <CardTable cards={cards} />
-  </div>
+    <div>
+        <h2>Missing ({cards.length})</h2>
+        <CardTable cards={cards} />
+    </div>
 );
 
 Missing.defaultProps = {

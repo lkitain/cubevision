@@ -22,9 +22,9 @@ store.dispatch(fetchCubeCards());
 window.store = store;
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Router />
-  </Provider>,
-  // eslint-disable-next-line no-undef
-  document.getElementById('root'),
+    <Provider store={store}>
+        <Router />
+    </Provider>,
+    // eslint-disable-next-line no-undef
+    document.getElementById('root'),
 );

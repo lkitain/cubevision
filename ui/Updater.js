@@ -17,11 +17,11 @@ export default class Updater extends React.Component {
     }
     render() {
         return (
-          <div>
-            <input ref={(name) => { this.name = name; }} />
-            <textarea ref={(cards) => { this.cards = cards; }} />
-            <button onClick={this.handleSave}>Save</button>
-          </div>
+            <div>
+                <input ref={(name) => { this.name = name; }} />
+                <textarea ref={(cards) => { this.cards = cards; }} />
+                <button onClick={this.handleSave}>Save</button>
+            </div>
         );
     }
 }

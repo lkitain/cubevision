@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import { LAST_CUBE, OUR_BINDER } from './consts';
 import { sort } from './helper';
+import { cardType } from './propTypes';
 
 class Replacements extends React.Component {
     constructor(props) {
@@ -22,14 +23,16 @@ class Replacements extends React.Component {
     }
     render() {
         return (
-          <div>
-            <select ref={(cards) => { this.cards = cards; }}>
-              {this.props.cards.map(card => (
-                <option value={card.card_id} key={card.card_id}>{card.name}</option>
-              ))}
-            </select>
-            <button onClick={this.handleSave}>Save</button>
-          </div>
+            <div>
+                <select ref={(cards) => { this.cards = cards; }}>
+                    {this.props.cards.map(card => (
+                        <option value={card.card_id} key={card.card_id}>
+                            {card.name}
+                        </option>
+                    ))}
+                </select>
+                <button onClick={this.handleSave}>Save</button>
+            </div>
         );
     }
 }
@@ -40,10 +43,7 @@ Replacements.defaultProps = {
 
 Replacements.propTypes = {
     cardId: PropTypes.number.isRequired,
-    cards: PropTypes.arrayOf(PropTypes.shape({
-        // card
-        name: PropTypes.string,
-    })),
+    cards: PropTypes.arrayOf(cardType),
 };
 
 const mapStateToProps = (state) => {

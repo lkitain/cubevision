@@ -4,12 +4,13 @@ import { connect } from 'react-redux';
 
 import CardTable from './CardTable';
 import { OUR_CUBE } from './consts';
+import { cubeType, cardType } from './propTypes';
 
 const Cube = ({ cube, cards }) => (
-  <div>
-    <h2>{cube.name}</h2>
-    <CardTable cards={cards} canEdit={cube.cube_id === OUR_CUBE} />
-  </div>
+    <div>
+        <h2>{cube.name}</h2>
+        <CardTable cards={cards} canEdit={cube.cube_id === OUR_CUBE} />
+    </div>
 );
 
 Cube.defaultProps = {
@@ -18,18 +19,14 @@ Cube.defaultProps = {
 };
 
 Cube.propTypes = {
+    // eslint-disable-next-line react/no-unused-prop-types
     match: PropTypes.shape({
         params: PropTypes.shape({
             id: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
-    cube: PropTypes.shape({
-        name: PropTypes.string,
-    }),
-    cards: PropTypes.arrayOf(PropTypes.shape({
-        // card
-        name: PropTypes.string,
-    })),
+    cube: cubeType,
+    cards: PropTypes.arrayOf(cardType),
 };
 
 const mapStateToProps = (state, props) => {

@@ -20,7 +20,7 @@ export function fetchCubes() {
         return fetch('/api/cube')
             .then(
                 response => response.json(),
-                error => console.log('An error occured.', error)
+                error => console.log('An error occured.', error),
             )
             .then(json => dispatch(receiveCubes(json)));
     };
@@ -48,7 +48,7 @@ export function fetchCards() {
         return fetch('/api/card')
             .then(
                 response => response.json(),
-                error => console.log('An error occured.', error)
+                error => console.log('An error occured.', error),
             )
             .then(json => dispatch(receiveCards(json)));
     };
@@ -76,7 +76,7 @@ export function fetchCubeCards() {
         return fetch('/api/cube/cards')
             .then(
                 response => response.json(),
-                error => console.log('An error occured.', error)
+                error => console.log('An error occured.', error),
             )
             .then(json => dispatch(receiveCubeCards(json)));
     };
