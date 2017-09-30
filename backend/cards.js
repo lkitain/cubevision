@@ -36,26 +36,26 @@ router.get('/', (request, response) => {
     });
 });
 
-router.post('/setversion', (request, response) => {
-    console.log('setversion')
-    const pool = new pg.Pool({
-        connectionString: process.env.DATABASE_URL,
-    });
-    const cardId = request.body.cardId;
-    const multiverseid = request.body.multiverseid;
-    console.log(request.body);
-    pool.connect((connErr, client, done) => {
-        setVersion(cardId, multiverseid, client)
-            .then(() => {
-                response.send(true);
-                done();
-            })
-            .catch((err) => {
-                response.send(err);
-                done();
-            });
-    });
-});
+// router.post('/setversion', (request, response) => {
+//     console.log('setversion')
+//     const pool = new pg.Pool({
+//         connectionString: process.env.DATABASE_URL,
+//     });
+//     const cardId = request.body.cardId;
+//     const multiverseid = request.body.multiverseid;
+//     console.log(request.body);
+//     pool.connect((connErr, client, done) => {
+//         setVersion(cardId, multiverseid, client)
+//             .then(() => {
+//                 response.send(true);
+//                 done();
+//             })
+//             .catch((err) => {
+//                 response.send(err);
+//                 done();
+//             });
+//     });
+// });
 
 // router.post('/acquire', (request, response) => {
 //     const pool = new pg.Pool({
@@ -101,35 +101,34 @@ router.post('/setversion', (request, response) => {
 //     });
 // });
 //
-router.get('/update', (request, response) => {
-    console.log('asdf');
-    const pool = new pg.Pool({
-        connectionString: process.env.DATABASE_URL,
-    });
-    pool.connect((connErr, client, done) => {
-        client.query('select * from cards where printings is null limit 30;', (err, result) => {
-            // console.log(result);
-            if (err) {
-                response.send(`Error ${err}`);
-            } else {
-                const found = [];
-                Promise.all(
-                    result.rows.map(row =>
-                        getData(row, {})
-                            .then(data => {
-                                console.log('sql', data);
-                                updatePrintings(data.card, data.cardId, data.colors, data.printings, client);
-                            })
-                            .catch(err => response.send(err))
-                        )
-                )
-                    .then(() => response.send(success))
-                    .catch(err => response.send(err));
-            }
-            done();
-        });
-    });
-});
+// router.get('/update', (request, response) => {
+//     console.log('asdf');
+//     const pool = new pg.Pool({
+//         connectionString: process.env.DATABASE_URL,
+//     });
+//     pool.connect((connErr, client, done) => {
+//         client.query('select * from cards where printings is null limit 30;', (err, result) => {
+//             // console.log(result);
+//             if (err) {
+//                 response.send(`Error ${err}`);
+//             } else {
+//                 Promise.all(
+//                     result.rows.map(row =>
+//                         getData(row, {})
+//                             .then(data => {
+//                                 console.log('sql', data);
+//                                 updatePrintings(data.card, data.cardId, data.colors, data.printings, client);
+//                             })
+//                             .catch(err => response.send(err))
+//                         )
+//                 )
+//                     .then(() => response.send(success))
+//                     .catch(err => response.send(err));
+//             }
+//             done();
+//         });
+//     });
+// });
 
 function getData(row) {
     const splitName = row.name.split(' // ');
@@ -139,45 +138,42 @@ function getData(row) {
             const data = {
                 printings: [],
             };
-            let totalPrints = 1000000;
             const ev = mtg.card
                 .all({ name: cName });
             ev.on('data', (card) => {
-                    // console.log('data');
-                    // // console.log(card);
-                    // console.log(cName);
-                    // console.log(row.name);
-                    const printings = data.printings;
-                    if (card.name === cName) {
-                        // console.log(card.set);
-                        const copy = {
-                            rarity: card.rarity[0],
-                            set: card.set,
-                        };
-                        if (Object.hasOwnProperty.call(card, 'multiverseid')) {
-                            copy.multiverseid = card.multiverseid;
-                        }
-                        printings.push(copy);
-                        totalPrints = card.printings.length;
-                        // console.log(totalPrints);
-                    } else {
-                        return;
+                // console.log('data');
+                // // console.log(card);
+                // console.log(cName);
+                // console.log(row.name);
+                const printings = data.printings;
+                if (card.name === cName) {
+                    // console.log(card.set);
+                    const copy = {
+                        rarity: card.rarity[0],
+                        set: card.set,
+                    };
+                    if (Object.hasOwnProperty.call(card, 'multiverseid')) {
+                        copy.multiverseid = card.multiverseid;
                     }
+                    printings.push(copy);
+                } else {
+                    return;
+                }
 
-                    let colors = 'C';
-                    if (Object.hasOwnProperty.call(card, 'colors')) {
-                        colors = card.colors.reduce((out, c) => {
-                            if (c === 'Blue') {
-                                return `${out}U`;
-                            }
-                            return `${out}${c[0]}`;
-                        }, '');
-                    }
-                    data.card = card;
-                    data.colors = colors;
-                    data.printings = printings;
-                    data.cardId = row.card_id;
-                });
+                let colors = 'C';
+                if (Object.hasOwnProperty.call(card, 'colors')) {
+                    colors = card.colors.reduce((out, c) => {
+                        if (c === 'Blue') {
+                            return `${out}U`;
+                        }
+                        return `${out}${c[0]}`;
+                    }, '');
+                }
+                data.card = card;
+                data.colors = colors;
+                data.printings = printings;
+                data.cardId = row.card_id;
+            });
             ev.on('end', () => resolve(data));
             ev.on('err', (err) => { console.log('err', err); });
         })))
@@ -191,7 +187,7 @@ function getData(row) {
                     }
                 });
                 if (i > 0) {
-                    outData.card.manaCost = `${outData.card.manaCost} // ${curr.card.manaCost}`
+                    outData.card.manaCost = `${outData.card.manaCost} // ${curr.card.manaCost}`;
                 }
                 outData.colors = colors.sort((a, b) => {
                     if (a === 'W') {
