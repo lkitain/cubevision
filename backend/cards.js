@@ -193,7 +193,30 @@ function getData(row) {
                 if (i > 0) {
                     outData.card.manaCost = `${outData.card.manaCost} // ${curr.card.manaCost}`
                 }
-                outData.colors = colors.join('');
+                outData.colors = colors.sort((a, b) => {
+                    if (a === 'W') {
+                        return -1;
+                    } else if (b === 'W') {
+                        return 1;
+                    } else if (a === 'U') {
+                        return -1;
+                    } else if (b === 'U') {
+                        return 1;
+                    } else if (a === 'B') {
+                        return -1;
+                    } else if (b === 'B') {
+                        return 1;
+                    } else if (a === 'R') {
+                        return -1;
+                    } else if (b === 'R') {
+                        return 1;
+                    } else if (a === 'G') {
+                        return -1;
+                    } else if (b === 'G') {
+                        return 1;
+                    }
+                    return 0;
+                }).join('');
             });
             return outData;
         });
