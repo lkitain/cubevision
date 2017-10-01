@@ -22,7 +22,7 @@ const SetIcon = ({ set }) => {
         <i
             title={`${setCode.toUpperCase()} ${rarity}`}
             style={{ paddingRight: 1 }}
-            className={`ss ss-grad ss-2x ss-${setCode} ss-${rarity}`}
+            className={`ss ss-grad ss-2x ss-fw ss-${setCode} ss-${rarity}`}
         />
     );
 };
