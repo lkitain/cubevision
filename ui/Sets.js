@@ -14,7 +14,7 @@ const handleSave = (cardId, multiverseid) => () =>
         }),
     });
 
-const Sets = ({ printings, ownedId, cardId }) => (
+const Sets = ({ printings, cardId }) => (
     <div>
         {printings
             // filter out online sets
@@ -25,7 +25,6 @@ const Sets = ({ printings, ownedId, cardId }) => (
                     role="button"
                     tabIndex={0}
                     style={{
-                        background: ownedId === set.multiverseid ? 'lightsteelblue' : '',
                         display: 'inline-block',
                     }}
                     onClick={handleSave(cardId, set.multiverseid)}
@@ -39,7 +38,6 @@ const Sets = ({ printings, ownedId, cardId }) => (
 );
 
 Sets.propTypes = {
-    ownedId: PropTypes.number,
     cardId: PropTypes.number.isRequired,
     printings: PropTypes.arrayOf(setType).isRequired,
 };

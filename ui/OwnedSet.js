@@ -7,11 +7,11 @@ import { setType } from './propTypes';
 const OwnedSet = ({ printings, ownedId }) => {
     let owned = {};
     printings
-      .forEach((set) => {
-          if (set.multiverseid === ownedId) {
-              owned = set;
-          }
-      });
+        .forEach((set) => {
+            if (set.multiverseid === ownedId) {
+                owned = set;
+            }
+        });
 
     return <SetIcon set={owned} />;
 };

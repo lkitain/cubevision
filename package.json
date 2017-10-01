@@ -10,7 +10,7 @@
     "start": "node index.js",
     "start-dev": "DATABASE_URL=$(heroku config:get DATABASE_URL -a cubevision) node index.js",
     "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress",
-    "lint": "eslint ."
+    "lint": "eslint ui backend"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",

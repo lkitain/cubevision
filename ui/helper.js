@@ -1,7 +1,7 @@
 import { OUR_CUBE, OUR_BINDER } from './consts';
 
 const standardSets = [
-    'KAL',
+    'KLD',
     'AER',
     'AKH',
     'W17',

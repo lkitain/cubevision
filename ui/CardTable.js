@@ -33,16 +33,18 @@ export default class CardTable extends React.Component {
     render() {
         const cards = this.sort();
         return (
-            <table>
-                <thead>
-                    <CardRow isHeader doSort={this.doSort} canEdit={this.props.canEdit} />
-                </thead>
-                <tbody>
-                    {cards.map(card => (
-                        <CardRow key={card.card_id} card={card} canEdit={this.props.canEdit} />
-                    ))}
-                </tbody>
-            </table>
+            <div>
+                <table>
+                    <thead>
+                        <CardRow isHeader doSort={this.doSort} canEdit={this.props.canEdit} />
+                    </thead>
+                    <tbody>
+                        {cards.map(card => (
+                            <CardRow key={card.card_id} card={card} canEdit={this.props.canEdit} />
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }

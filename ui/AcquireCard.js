@@ -20,14 +20,14 @@ class Acquire extends React.Component {
     }
     render() {
         return (
-          <div>
-            <select ref={(cards) => { this.cards = cards; }}>
-              {this.props.cards.map(card => (
-                <option value={card.card_id} key={card.card_id}>{card.name}</option>
-              ))}
-            </select>
-            <button onClick={this.handleSave}>Save</button>
-          </div>
+            <div>
+                <select ref={(cards) => { this.cards = cards; }}>
+                    {this.props.cards.map(card => (
+                        <option value={card.card_id} key={card.card_id}>{card.name}</option>
+                    ))}
+                </select>
+                <button onClick={this.handleSave}>Save</button>
+            </div>
         );
     }
 }

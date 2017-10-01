@@ -30,23 +30,8 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
                     </button>
                 </th>
                 <th>
-                    <button onClick={doSort('cmc')}>
-                        CMC
-                    </button>
-                </th>
-                <th>
-                    <button onClick={doSort('color')}>
-                        Color
-                    </button>
-                </th>
-                <th>
                     <button onClick={doSort('types')}>
                         Types
-                    </button>
-                </th>
-                <th>
-                    <button onClick={doSort('reserved')}>
-                        Reserved
                     </button>
                 </th>
                 <th>
@@ -59,15 +44,36 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
             </tr>
         );
     }
+    let backgroundColor = 'rgb(135, 110, 90)';
+    let color = 'white';
+    if (card.color.length > 1) {
+        backgroundColor = 'rgb(223, 204, 151)';
+        color = 'black';
+    } else if (card.color === 'G') {
+        backgroundColor = 'rgb(200, 217, 209)';
+        color = 'black';
+    } else if (card.color === 'W') {
+        backgroundColor = 'rgb(248, 248, 246)';
+        color = 'black';
+    } else if (card.color === 'R') {
+        backgroundColor = 'rgb(245, 210, 190)';
+        color = 'black';
+    } else if (card.color === 'B') {
+        backgroundColor = 'rgb(194, 187, 187)';
+        color = 'black';
+    } else if (card.color === 'U') {
+        backgroundColor = 'rgb(182, 216, 233)';
+        color = 'black';
+    }
     return (
         <tr
             style={{
                 height: 31,
-                backgroundColor: inCurrent ? 'white' : 'lightgrey',
-                color: isInStandard(card) ? 'chocolate' : 'black',
+                backgroundColor,
+                color,
             }}
         >
-            <td>{card.name}</td>
+            <td style={{ fontWeight: 'bold' }}>{card.name} {card.reserved ? '*' : ''}</td>
             <td>
                 <a
                     target="__blank"
@@ -84,10 +90,7 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
                 </a>
             </td>
             <td><ManaCost manaCost={card.mana_cost} /></td>
-            <td>{card.cmc}</td>
-            <td>{card.color}</td>
             <td>{card.types.replace(',', ' ')}</td>
-            <td>{card.reserved ? '*' : ''}</td>
             <td>
                 <Sets
                     printings={JSON.parse(card.printings)}
