@@ -19,6 +19,7 @@ const Sets = ({ printings, cardId }) => (
         {printings
             // filter out online sets
             .filter(set => !(/ME[D1-4]|VMA|TPR|PZ1|PMODO/i.test(set.set)))
+            .sort((a, b) => a.multiverseid > b.multiverseid)
             .map((set, i) => (
                 <div
                     key={`${set.set}-${set.multiverseid}-${i}`} // eslint-disable-line react/no-array-index-key

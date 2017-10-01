@@ -15,7 +15,7 @@ import { OUR_CUBE, OUR_BINDER } from './consts';
 const BasicExample = () => (
     <Router>
         <div>
-            <ul>
+            <ul style={{ display: 'flex', justifyContent: 'space-around' }}>
                 <li><Link to={`/cube/${OUR_CUBE}`}>Current Cube</Link></li>
                 <li><Link to={`/cube/${OUR_BINDER}`}>Current Binder</Link></li>
                 <li><Link to="/cubes">Cubes</Link></li>
