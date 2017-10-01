@@ -10,8 +10,7 @@ module.exports = {
     },
     styles: {
         hideOnSmall: {
-            display: 'block',
-            '@media (max-width: 400px)': {
+            '@media (max-width: 500px)': {
                 display: 'none',
             },
         },

@@ -36,10 +36,22 @@ const getCubeCards = (cards = {}, action) => {
     }
 };
 
+const sorter = (sortings = {
+    sort: 'name',
+}, action) => {
+    switch (action.type) {
+    case 'SET_SORTER':
+        return Object.assign({}, sortings, action.data);
+    default:
+        return sortings;
+    }
+};
+
 const rootReducer = combineReducers({
     getCubes,
     getCards,
     getCubeCards,
+    sorter,
 });
 
 export default rootReducer;

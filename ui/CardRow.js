@@ -1,44 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import Radium from 'radium';
 
 import { cardType } from './propTypes';
 import ManaCost from './ManaCost';
 import Sets from './Sets';
 import OwnedSet from './OwnedSet';
 import Replacements from './Replacements';
-import { isInStandard } from './helper';
-import { LAST_CUBE } from './consts';
+import { styles } from './consts';
 
-const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
+const CardRow = ({ card, isHeader, canEdit }) => {
     if (isHeader) {
         return (
             <tr>
                 <th>
-                    <button onClick={doSort('name')}>
-                        Name
-                    </button>
+                    Name
+                </th>
+                <th style={styles.hideOnSmall}>
+                    Image
+                </th>
+                <th style={styles.hideOnSmall}>
+                    Mana Cost
                 </th>
                 <th>
-                    <button onClick={doSort('owned_multiverseid')}>
-                        Image
-                    </button>
-                </th>
-                <th>
-                    <button onClick={doSort('mana_cost')}>
-                        Mana Cost
-                    </button>
-                </th>
-                <th>
-                    <button onClick={doSort('types')}>
-                        Types
-                    </button>
+                    Types
                 </th>
                 <th>
                     Sets
                 </th>
                 {canEdit &&
-                <th>
+                <th style={styles.hideOnSmall}>
                     Remove
                 </th>}
             </tr>
@@ -73,8 +64,10 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
                 color,
             }}
         >
-            <td style={{ fontWeight: 'bold' }}>{card.name} {card.reserved ? '*' : ''}</td>
-            <td>
+            <td style={{ fontWeight: 'bold' }}>
+                {card.name} {card.reserved ? '*' : ''}
+            </td>
+            <td style={styles.hideOnSmall}>
                 <a
                     target="__blank"
                     rel="noopener noreferrer"
@@ -89,7 +82,9 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
                     ) : 'Image'}
                 </a>
             </td>
-            <td><ManaCost manaCost={card.mana_cost} /></td>
+            <td style={styles.hideOnSmall}>
+                <ManaCost manaCost={card.mana_cost} />
+            </td>
             <td>{card.types.replace(',', ' ')}</td>
             <td>
                 <Sets
@@ -99,7 +94,7 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
                 />
             </td>
             {canEdit &&
-            <th>
+            <th style={styles.hideOnSmall}>
                 <Replacements cardId={card.card_id} />
             </th>}
         </tr>
@@ -109,38 +104,13 @@ const CardRow = ({ card, isHeader, doSort, canEdit, inCurrent }) => {
 CardRow.defaultProps = {
     isHeader: false,
     card: {},
-    doSort: () => {},
     canEdit: false,
-    cubes: [],
-    inCurrent: false,
 };
 
 CardRow.propTypes = {
     card: cardType,
-    doSort: PropTypes.func,
     isHeader: PropTypes.bool,
-    inCurrent: PropTypes.bool,
     canEdit: PropTypes.bool,
 };
 
-const mapStateToProps = (state, props) => {
-    const cubes = [];
-    let inCurrent = false;
-    if (!props.isHeader) {
-        Object.keys(state.getCubeCards).forEach((cubeId) => {
-            if (state.getCubeCards[cubeId].indexOf(props.card.card_id) > -1) {
-                cubes.push(state.getCubes[cubeId]);
-                if (parseInt(cubeId, 10) === LAST_CUBE) {
-                    inCurrent = true;
-                }
-            }
-        });
-    }
-    return ({
-        inCurrent,
-    });
-};
-
-const ConnectedCardRow = connect(mapStateToProps)(CardRow);
-
-export default ConnectedCardRow;
+export default Radium(CardRow);

@@ -20,6 +20,7 @@ const SetIcon = ({ set }) => {
     }
     return (
         <i
+            title={`${setCode.toUpperCase()} ${rarity}`}
             style={{ paddingRight: 1 }}
             className={`ss ss-grad ss-2x ss-${setCode} ss-${rarity}`}
         />

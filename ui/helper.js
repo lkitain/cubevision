@@ -13,6 +13,8 @@ const standardSets = [
 const isInStandard = card => JSON.parse(card.printings)
     .reduce((init, set) => init || standardSets.indexOf(set.set) !== -1, false);
 
+const isNotOnlineOnly = set => !(/ME[D1-4]|VMA|TPR|PZ1|PMODO/i.test(set.set));
+
 const getMissing = (state) => {
     let ownedCards = [];
     let missingCards = [];
@@ -27,6 +29,39 @@ const getMissing = (state) => {
     return missingCards;
 };
 
+const colorSort = (cardA, cardB) => {
+    const a = cardA.color;
+    const b = cardB.color;
+    if (a === b) {
+        return sort('name')(cardA, cardB);
+    } else if (a === 'W') {
+        return -1;
+    } else if (b === 'W') {
+        return 1;
+    } else if (a === 'U') {
+        return -1;
+    } else if (b === 'U') {
+        return 1;
+    } else if (a === 'B') {
+        return -1;
+    } else if (b === 'B') {
+        return 1;
+    } else if (a === 'R') {
+        return -1;
+    } else if (b === 'R') {
+        return 1;
+    } else if (a === 'G') {
+        return -1;
+    } else if (b === 'G') {
+        return 1;
+    } else if (a === 'C') {
+        return -1;
+    } else if (b === 'C') {
+        return 1;
+    }
+    return sort('name')(cardA, cardB);
+};
+
 const sort = (field = 'name', directionIn = false) => (a, b) => {
     const direction = directionIn ? 1 : -1;
     if (a[field] < b[field]) {
@@ -34,7 +69,16 @@ const sort = (field = 'name', directionIn = false) => (a, b) => {
     } else if (a[field] > b[field]) {
         return direction * -1;
     }
+    if (field !== 'name') {
+        return colorSort(a, b);
+    }
     return 0;
 };
 
-export { getMissing, isInStandard, sort };
+export {
+    colorSort,
+    getMissing,
+    isInStandard,
+    isNotOnlineOnly,
+    sort,
+};

@@ -130,92 +130,92 @@ router.get('/', (request, response) => {
 //     });
 // });
 
-function getData(row) {
-    const splitName = row.name.split(' // ');
-    return Promise.all(splitName.map(cName =>
-        new Promise((resolve) => {
-            console.log(cName);
-            const data = {
-                printings: [],
-            };
-            const ev = mtg.card
-                .all({ name: cName });
-            ev.on('data', (card) => {
-                // console.log('data');
-                // // console.log(card);
-                // console.log(cName);
-                // console.log(row.name);
-                const printings = data.printings;
-                if (card.name === cName) {
-                    // console.log(card.set);
-                    const copy = {
-                        rarity: card.rarity[0],
-                        set: card.set,
-                    };
-                    if (Object.hasOwnProperty.call(card, 'multiverseid')) {
-                        copy.multiverseid = card.multiverseid;
-                    }
-                    printings.push(copy);
-                } else {
-                    return;
-                }
-
-                let colors = 'C';
-                if (Object.hasOwnProperty.call(card, 'colors')) {
-                    colors = card.colors.reduce((out, c) => {
-                        if (c === 'Blue') {
-                            return `${out}U`;
-                        }
-                        return `${out}${c[0]}`;
-                    }, '');
-                }
-                data.card = card;
-                data.colors = colors;
-                data.printings = printings;
-                data.cardId = row.card_id;
-            });
-            ev.on('end', () => resolve(data));
-            ev.on('err', (err) => { console.log('err', err); });
-        })))
-        .then((data) => {
-            const outData = data[0];
-            data.forEach((curr, i) => {
-                const colors = outData.colors.split();
-                curr.colors.split().forEach((c) => {
-                    if (colors.indexOf(c) === -1) {
-                        colors.push(c);
-                    }
-                });
-                if (i > 0) {
-                    outData.card.manaCost = `${outData.card.manaCost} // ${curr.card.manaCost}`;
-                }
-                outData.colors = colors.sort((a, b) => {
-                    if (a === 'W') {
-                        return -1;
-                    } else if (b === 'W') {
-                        return 1;
-                    } else if (a === 'U') {
-                        return -1;
-                    } else if (b === 'U') {
-                        return 1;
-                    } else if (a === 'B') {
-                        return -1;
-                    } else if (b === 'B') {
-                        return 1;
-                    } else if (a === 'R') {
-                        return -1;
-                    } else if (b === 'R') {
-                        return 1;
-                    } else if (a === 'G') {
-                        return -1;
-                    } else if (b === 'G') {
-                        return 1;
-                    }
-                    return 0;
-                }).join('');
-            });
-            return outData;
-        });
-}
+// function getData(row) {
+//     const splitName = row.name.split(' // ');
+//     return Promise.all(splitName.map(cName =>
+//         new Promise((resolve) => {
+//             console.log(cName);
+//             const data = {
+//                 printings: [],
+//             };
+//             const ev = mtg.card
+//                 .all({ name: cName });
+//             ev.on('data', (card) => {
+//                 // console.log('data');
+//                 // // console.log(card);
+//                 // console.log(cName);
+//                 // console.log(row.name);
+//                 const printings = data.printings;
+//                 if (card.name === cName) {
+//                     // console.log(card.set);
+//                     const copy = {
+//                         rarity: card.rarity[0],
+//                         set: card.set,
+//                     };
+//                     if (Object.hasOwnProperty.call(card, 'multiverseid')) {
+//                         copy.multiverseid = card.multiverseid;
+//                     }
+//                     printings.push(copy);
+//                 } else {
+//                     return;
+//                 }
+//
+//                 let colors = 'C';
+//                 if (Object.hasOwnProperty.call(card, 'colors')) {
+//                     colors = card.colors.reduce((out, c) => {
+//                         if (c === 'Blue') {
+//                             return `${out}U`;
+//                         }
+//                         return `${out}${c[0]}`;
+//                     }, '');
+//                 }
+//                 data.card = card;
+//                 data.colors = colors;
+//                 data.printings = printings;
+//                 data.cardId = row.card_id;
+//             });
+//             ev.on('end', () => resolve(data));
+//             ev.on('err', (err) => { console.log('err', err); });
+//         })))
+//         .then((data) => {
+//             const outData = data[0];
+//             data.forEach((curr, i) => {
+//                 const colors = outData.colors.split();
+//                 curr.colors.split().forEach((c) => {
+//                     if (colors.indexOf(c) === -1) {
+//                         colors.push(c);
+//                     }
+//                 });
+//                 if (i > 0) {
+//                     outData.card.manaCost = `${outData.card.manaCost} // ${curr.card.manaCost}`;
+//                 }
+//                 outData.colors = colors.sort((a, b) => {
+//                     if (a === 'W') {
+//                         return -1;
+//                     } else if (b === 'W') {
+//                         return 1;
+//                     } else if (a === 'U') {
+//                         return -1;
+//                     } else if (b === 'U') {
+//                         return 1;
+//                     } else if (a === 'B') {
+//                         return -1;
+//                     } else if (b === 'B') {
+//                         return 1;
+//                     } else if (a === 'R') {
+//                         return -1;
+//                     } else if (b === 'R') {
+//                         return 1;
+//                     } else if (a === 'G') {
+//                         return -1;
+//                     } else if (b === 'G') {
+//                         return 1;
+//                     }
+//                     return 0;
+//                 }).join('');
+//             });
+//             return outData;
+//         });
+// }
 
 module.exports = router;

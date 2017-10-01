@@ -7,7 +7,7 @@ import { getMissing } from './helper';
 
 const Missing = ({ cards }) => (
     <div>
-        <h2>Missing ({cards.length})</h2>
+        <h2>Missing</h2>
         <CardTable cards={cards} />
     </div>
 );
