@@ -4,23 +4,30 @@ import {
     Route,
     Link,
 } from 'react-router-dom';
+import Radium, { StyleRoot } from 'radium';
 
 import Cubes from './Cubes';
 import Cube from './Cube';
 import Updater from './Updater';
 import Missing from './Missing';
 import AcquireCard from './AcquireCard';
-import { OUR_CUBE, OUR_BINDER } from './consts';
+import { OUR_CUBE, OUR_BINDER, styles } from './consts';
 
-const BasicExample = () => (
+const CubeRouter = () => (
     <Router>
-        <div>
-            <ul style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <StyleRoot>
+            <ul style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                listStyleType: 'none',
+                paddingLeft: 8,
+            }}
+            >
                 <li><Link to={`/cube/${OUR_CUBE}`}>Current Cube</Link></li>
-                <li><Link to={`/cube/${OUR_BINDER}`}>Current Binder</Link></li>
-                <li><Link to="/cubes">Cubes</Link></li>
+                <li style={styles.hideOnSmall}><Link to={`/cube/${OUR_BINDER}`}>Current Binder</Link></li>
+                <li style={styles.hideOnSmall}><Link to="/cubes">Cubes</Link></li>
                 <li><Link to="/missing">Missing</Link></li>
-                <li><Link to="/update">Update</Link></li>
+                <li style={styles.hideOnSmall}><Link to="/update">Update</Link></li>
                 <li><Link to="/acquire">Acquire</Link></li>
             </ul>
 
@@ -31,8 +38,8 @@ const BasicExample = () => (
             <Route path="/missing" component={Missing} />
             <Route path="/update" component={Updater} />
             <Route path="/acquire" component={AcquireCard} />
-        </div>
+        </StyleRoot>
     </Router>
 );
 
-export default BasicExample;
+export default Radium(CubeRouter);

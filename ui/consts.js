@@ -8,4 +8,12 @@ module.exports = {
         ced: 'xcle',
         tsb: 'tsp',
     },
+    styles: {
+        hideOnSmall: {
+            display: 'block',
+            '@media (max-width: 400px)': {
+                display: 'none',
+            },
+        },
+    },
 };
