@@ -44,7 +44,7 @@ CardTable.propTypes = {
 };
 
 const mapStateToProps = (state, props) => {
-    let sortedCards = props.cards;
+    let sortedCards = props.cards.filter(card => card);
     if (state.sorter.standard) {
         sortedCards = sortedCards.filter(card => !isInStandard(card));
     }
