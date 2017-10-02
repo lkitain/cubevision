@@ -55,6 +55,9 @@ const CardRow = ({ card, isHeader, canEdit }) => {
     } else if (card.color === 'U') {
         backgroundColor = 'rgb(182, 216, 233)';
         color = 'black';
+    } else if (card.types === 'Land') {
+        backgroundColor = 'rgb(196, 177, 112)';
+        color = 'black';
     }
     return (
         <tr
