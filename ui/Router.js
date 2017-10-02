@@ -4,7 +4,7 @@ import {
     Route,
     Link,
 } from 'react-router-dom';
-import Radium, { StyleRoot } from 'radium';
+import Radium from 'radium';
 
 import Cubes from './Cubes';
 import Cube from './Cube';
@@ -15,7 +15,7 @@ import { OUR_CUBE, OUR_BINDER, styles } from './consts';
 
 const CubeRouter = () => (
     <Router>
-        <StyleRoot>
+        <div>
             <ul style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -38,7 +38,7 @@ const CubeRouter = () => (
             <Route path="/missing" component={Missing} />
             <Route path="/update" component={Updater} />
             <Route path="/acquire" component={AcquireCard} />
-        </StyleRoot>
+        </div>
     </Router>
 );
 
