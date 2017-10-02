@@ -59,6 +59,19 @@ const CardRow = ({ card, isHeader, canEdit }) => {
         backgroundColor = 'rgb(196, 177, 112)';
         color = 'black';
     }
+    let reserved = '';
+    if (card.reserved) {
+        reserved = (
+            <span style={{
+                fontWeight: 'normal',
+                fontSize: 'x-small',
+                verticalAlign: 'top',
+            }}
+            >
+                &reg;
+            </span>
+        );
+    }
     return (
         <tr
             style={{
@@ -68,7 +81,7 @@ const CardRow = ({ card, isHeader, canEdit }) => {
             }}
         >
             <td style={{ fontWeight: 'bold' }}>
-                {card.name} {card.reserved ? '*' : ''}
+                {card.name} {reserved}
             </td>
             <td style={styles.hideOnSmall}>
                 <a
