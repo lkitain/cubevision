@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { replaceCard } from './actions';
 import { LAST_CUBE, OUR_BINDER } from './consts';
 import { sort } from './helper';
 import { cardType } from './propTypes';
@@ -19,6 +20,10 @@ class Replacements extends React.Component {
                 newCardId: this.cards.value,
                 oldCardId: this.props.cardId,
             }),
+        }).then((result) => {
+            if (result.status === 200) {
+                this.props.replaceCard(parseInt(this.cards.value, 10), this.props.cardId);
+            }
         });
     }
     render() {
@@ -44,6 +49,7 @@ Replacements.defaultProps = {
 Replacements.propTypes = {
     cardId: PropTypes.number.isRequired,
     cards: PropTypes.arrayOf(cardType),
+    replaceCard: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -59,6 +65,11 @@ const mapStateToProps = (state) => {
     });
 };
 
-const ConnectedReplacements = connect(mapStateToProps)(Replacements);
+const mapDispatchToProps = dispatch => ({
+    replaceCard: (newCardId, oldCardId) =>
+        dispatch(replaceCard(newCardId, oldCardId)),
+});
+
+const ConnectedReplacements = connect(mapStateToProps, mapDispatchToProps)(Replacements);
 
 export default ConnectedReplacements;

@@ -42,6 +42,15 @@ function receiveCards(json) {
     };
 }
 
+export const REPLACE_CARD = 'REPLACE_CARD';
+export function replaceCard(newCardId, oldCardId) {
+    return {
+        type: REPLACE_CARD,
+        newCardId,
+        oldCardId,
+    };
+}
+
 export function fetchCards() {
     return (dispatch) => {
         dispatch(requestCards());

@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { OUR_CUBE, OUR_BINDER } from './consts';
 
 const getCubes = (cubes = {}, action) => {
     switch (action.type) {
@@ -21,6 +22,7 @@ const getCards = (cards = {}, action) => {
 };
 
 const getCubeCards = (cards = {}, action) => {
+    let outCards;
     switch (action.type) {
     case 'RECEIVE_CUBE_CARDS':
         return action.cubes.reduce((init, { card_id, cube_id }) => {
@@ -31,6 +33,11 @@ const getCubeCards = (cards = {}, action) => {
             ret[cube_id].push(card_id);
             return ret;
         }, {});
+    case 'REPLACE_CARD':
+        outCards = Object.assign({}, cards);
+        outCards[OUR_CUBE][cards[OUR_CUBE].indexOf(action.oldCardId)] = action.newCardId;
+        outCards[OUR_BINDER][cards[OUR_BINDER].indexOf(action.newCardId)] = action.oldCardId;
+        return outCards;
     default:
         return cards;
     }

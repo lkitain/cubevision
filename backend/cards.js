@@ -56,7 +56,7 @@ router.get('/', (request, response) => {
 //             });
 //     });
 // });
-
+//
 // router.post('/acquire', (request, response) => {
 //     const pool = new pg.Pool({
 //         connectionString: process.env.DATABASE_URL,
@@ -79,8 +79,8 @@ router.get('/', (request, response) => {
 //     const oldCardId = request.body.oldCardId;
 //     pool.connect((connErr, client, done) => {
 //         Promise.all([
-//             checkCardInCube(newCardId, constants.OUR_BINDER),
-//             checkCardInCube(oldCardId, constants.OUR_CUBE),
+//             checkCardInCube(newCardId, constants.OUR_BINDER, client),
+//             checkCardInCube(oldCardId, constants.OUR_CUBE, client),
 //         ])
 //             .then(() => startTransaction(client))
 //             .then(Promise.all([
@@ -129,7 +129,7 @@ router.get('/', (request, response) => {
 //         });
 //     });
 // });
-
+//
 // function getData(row) {
 //     const splitName = row.name.split(' // ');
 //     return Promise.all(splitName.map(cName =>
@@ -216,6 +216,6 @@ router.get('/', (request, response) => {
 //             });
 //             return outData;
 //         });
-// }
+}
 
 module.exports = router;

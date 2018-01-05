@@ -52,6 +52,10 @@ const mapStateToProps = (state, props) => {
         sortedCards = sortedCards.filter(card =>
             state.getCubeCards[LAST_CUBE].indexOf(card.card_id) > -1);
     }
+    if (state.sorter.excludeCurrent) {
+        sortedCards = sortedCards.filter(card =>
+            state.getCubeCards[LAST_CUBE].indexOf(card.card_id) === -1);
+    }
     if (state.sorter.sort === 'name' || state.sorter.sort === 'types') {
         sortedCards = sortedCards.sort(sort(state.sorter.sort));
     } else if (state.sorter.sort === 'age') {
