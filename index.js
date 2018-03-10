@@ -1,15 +1,16 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const httpsRedirect = require('express-https-redirect');
 
 const cubes = require('./backend/cubes');
 const cards = require('./backend/cards');
 
 const app = express();
 
-console.log(process.env.DATABASE_URL);
-
 app.set('port', (process.env.PORT || 5000));
+
+app.use('/', httpsRedirect());
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -18,10 +19,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(express.static(path.resolve(__dirname, './public')));
-
-app.get('/.well-known/acme-challenge/:content', (req, res) => {
-    res.send('cEwninuPL0_h4MUylf8vaqKF6nUg6UZAtn1Kk5MyrCg.3WUN_E3-bfK5ZEarLoXYaDGA2koEsct19s_uAlpO-34');
-});
 
 app.use('/api/cube', cubes);
 app.use('/api/card', cards);
