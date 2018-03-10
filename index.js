@@ -19,6 +19,10 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.resolve(__dirname, './public')));
 
+app.get('/.well-known/acme-challenge/:content', (req, res) => {
+    res.send('cEwninuPL0_h4MUylf8vaqKF6nUg6UZAtn1Kk5MyrCg.3WUN_E3-bfK5ZEarLoXYaDGA2koEsct19s_uAlpO-34');
+});
+
 app.use('/api/cube', cubes);
 app.use('/api/card', cards);
 
