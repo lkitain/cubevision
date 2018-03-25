@@ -29,11 +29,11 @@ const getMissing = (state) => {
     return missingCards;
 };
 
-const colorSort = (cardA, cardB) => {
+const colorSortHelper = (cardA, cardB) => {
     const a = cardA.color;
     const b = cardB.color;
     if (a === b) {
-        return sort('name')(cardA, cardB);
+        return 0;
     } else if (a === 'W') {
         return -1;
     } else if (b === 'W') {
@@ -59,6 +59,14 @@ const colorSort = (cardA, cardB) => {
     } else if (b === 'C') {
         return 1;
     }
+    return 0;
+};
+
+const colorSort = (cardA, cardB) => {
+    const colorSorting = colorSortHelper(cardA, cardB);
+    if (colorSorting !== 0) {
+        return colorSorting;
+    }
     return sort('name')(cardA, cardB);
 };
 
@@ -75,8 +83,22 @@ const sort = (field = 'name', directionIn = false) => (a, b) => {
     return 0;
 };
 
+const costSort = (cardA, cardB) => {
+    const returnValue = colorSortHelper(cardA, cardB);
+    if (returnValue === 0) {
+        if (cardA.cmc === cardB.cmc) {
+            return sort('name')(cardA, cardB);
+        } else if (cardA.cmc > cardB.cmc) {
+            return 1;
+        }
+        return -1;
+    }
+    return returnValue;
+};
+
 export {
     colorSort,
+    costSort,
     getMissing,
     isInStandard,
     isNotOnlineOnly,

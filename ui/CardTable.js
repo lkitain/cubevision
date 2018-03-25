@@ -4,32 +4,32 @@ import { connect } from 'react-redux';
 
 import CardRow from './CardRow';
 import Sorter from './Sorter';
-import { colorSort, sort, isInStandard, isNotOnlineOnly } from './helper';
+import { colorSort, costSort, sort, isInStandard, isNotOnlineOnly } from './helper';
 import { cardType } from './propTypes';
 import { LAST_CUBE } from './consts';
 
-class CardTable extends React.Component {
-    render() {
-        return (
-            <div>
-                <Sorter />
-                <div style={{ margin: 4, fontWeight: 'bold' }}>
-                    {this.props.sortedCards.length} of {this.props.cards.length}
-                </div>
-                <table>
-                    <thead>
-                        <CardRow isHeader canEdit={this.props.canEdit} />
-                    </thead>
-                    <tbody>
-                        {this.props.sortedCards.map(card => (
-                            <CardRow key={card.card_id} card={card} canEdit={this.props.canEdit} />
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        );
-    }
-}
+const CardTable = ({ sortedCards, cards, canEdit }) => (
+    <div>
+        <Sorter />
+        <div style={{ margin: 4, fontWeight: 'bold' }}>
+            {sortedCards.length} of {cards.length}
+        </div>
+        <table>
+            <thead>
+                <CardRow isHeader canEdit={canEdit} />
+            </thead>
+            <tbody>
+                {sortedCards.map(card => (
+                    <CardRow
+                        key={card.card_id}
+                        card={card}
+                        canEdit={canEdit}
+                    />
+                ))}
+            </tbody>
+        </table>
+    </div>
+);
 
 CardTable.defaultProps = {
     cards: [],
@@ -65,7 +65,7 @@ const mapStateToProps = (state, props) => {
                     (init > set.multiverseid ? init : set.multiverseid), 0);
             const b = JSON.parse(cardB.printings).filter(set => isNotOnlineOnly(set))
                 .reduce((init, set) =>
-                (init > set.multiverseid ? init : set.multiverseid), 0);
+                    (init > set.multiverseid ? init : set.multiverseid), 0);
             if (a > b) {
                 return -1;
             } else if (a < b) {
@@ -75,6 +75,8 @@ const mapStateToProps = (state, props) => {
         });
     } else if (state.sorter.sort === 'color') {
         sortedCards = sortedCards.sort(colorSort);
+    } else if (state.sorter.sort === 'cost') {
+        sortedCards = sortedCards.sort(costSort);
     }
     return {
         sortedCards,
