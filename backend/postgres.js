@@ -41,6 +41,7 @@ const addCardToCube = (cubeId, cardId, client) =>
                     reject(err);
                 }
             } else {
+                console.log('added');
                 resolve();
             }
         });
