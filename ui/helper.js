@@ -8,6 +8,7 @@ const standardSets = [
     'HOU',
     'XLN',
     'RIX',
+    'DOM',
 ];
 
 const isInStandard = card => JSON.parse(card.printings)

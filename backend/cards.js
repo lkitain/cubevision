@@ -124,102 +124,104 @@ router.get('/', (request, response) => {
     });
 });
 
-// router.post('/setversion', (request, response) => {
-//     console.log('setversion');
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
-//     const cardId = request.body.cardId;
-//     const multiverseid = request.body.multiverseid;
-//     console.log(request.body);
-//     pool.connect((connErr, client, done) => {
-//         setVersion(cardId, multiverseid, client)
-//             .then(() => {
-//                 response.send(true);
-//                 done();
-//             })
-//             .catch((err) => {
-//                 response.send(err);
-//                 done();
-//             });
-//     });
-// });
-//
-// router.post('/acquire', (request, response) => {
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
-//     const cardId = request.body.cardId;
-//     pool.connect((connErr, client, done) =>
-//         acquireCard(cardId, client)
-//             .then(() => {
-//                 console.log('acquired');
-//                 response.send(true);
-//                 done();
-//             }),
-//     );
-// });
-//
-//
-// router.post('/replace', (request, response) => {
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
-//     const newCardId = request.body.newCardId;
-//     const oldCardId = request.body.oldCardId;
-//     pool.connect((connErr, client, done) => {
-//         Promise.all([
-//             checkCardInCube(newCardId, constants.OUR_BINDER, client),
-//             checkCardInCube(oldCardId, constants.OUR_CUBE, client),
-//         ])
-//             .then(() => startTransaction(client))
-//             .then(Promise.all([
-//                 addCardToCube(constants.OUR_CUBE, newCardId, client),
-//                 addCardToCube(constants.OUR_BINDER, oldCardId, client),
-//                 removeCardFromCube(constants.OUR_BINDER, newCardId, client),
-//                 removeCardFromCube(constants.OUR_CUBE, oldCardId, client),
-//             ]))
-//             .then(() => commitTransaction(client))
-//             .catch((err) => {
-//                 console.log(err);
-//                 return rollbackTransaction(client);
-//             })
-//             .then((json) => {
-//                 response.send(json);
-//                 done();
-//             });
-//     });
-// });
-//
-// router.get('/update', (request, response) => {
-//     console.log('asdf');
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
-//     pool.connect((connErr, client, done) => {
-//         client.query('select * from cards where printings is null limit 30;', (err, result) => {
-//             // console.log(result);
-//             if (err) {
-//                 response.send(`Error ${err}`);
-//             } else {
-//                 Promise.all(
-//                     result.rows.map(row =>
-//                         getData(row, {})
-//                             .then((data) => {
-//                                 console.log('sql', data);
-//                                 updatePrintings(
-//                                     data.card, data.cardId,
-//                                     data.colors, data.printings, client);
-//                             })
-//                             .catch(dataErr => response.send(dataErr)),
-//                     ),
-//                 )
-//                     .then(() => response.send('success'))
-//                     .catch(otherErr => response.send(otherErr));
-//             }
-//             done();
-//         });
-//     });
-// });
+if (process.env.NODE_ENV === 'dev') {
+    router.post('/setversion', (request, response) => {
+        console.log('setversion');
+        const pool = new pg.Pool({
+            connectionString: process.env.DATABASE_URL,
+        });
+        const cardId = request.body.cardId;
+        const multiverseid = request.body.multiverseid;
+        console.log(request.body);
+        pool.connect((connErr, client, done) => {
+            setVersion(cardId, multiverseid, client)
+                .then(() => {
+                    response.send(true);
+                    done();
+                })
+                .catch((err) => {
+                    response.send(err);
+                    done();
+                });
+        });
+    });
+
+    router.post('/acquire', (request, response) => {
+        const pool = new pg.Pool({
+            connectionString: process.env.DATABASE_URL,
+        });
+        const cardId = request.body.cardId;
+        pool.connect((connErr, client, done) =>
+            acquireCard(cardId, client)
+                .then(() => {
+                    console.log('acquired');
+                    response.send(true);
+                    done();
+                }),
+        );
+    });
+
+
+    router.post('/replace', (request, response) => {
+        const pool = new pg.Pool({
+            connectionString: process.env.DATABASE_URL,
+        });
+        const newCardId = request.body.newCardId;
+        const oldCardId = request.body.oldCardId;
+        pool.connect((connErr, client, done) => {
+            Promise.all([
+                checkCardInCube(newCardId, constants.OUR_BINDER, client),
+                checkCardInCube(oldCardId, constants.OUR_CUBE, client),
+            ])
+                .then(() => startTransaction(client))
+                .then(Promise.all([
+                    addCardToCube(constants.OUR_CUBE, newCardId, client),
+                    addCardToCube(constants.OUR_BINDER, oldCardId, client),
+                    removeCardFromCube(constants.OUR_BINDER, newCardId, client),
+                    removeCardFromCube(constants.OUR_CUBE, oldCardId, client),
+                ]))
+                .then(() => commitTransaction(client))
+                .catch((err) => {
+                    console.log(err);
+                    return rollbackTransaction(client);
+                })
+                .then((json) => {
+                    response.send(json);
+                    done();
+                });
+        });
+    });
+
+    router.get('/update', (request, response) => {
+        console.log('asdf');
+        const pool = new pg.Pool({
+            connectionString: process.env.DATABASE_URL,
+        });
+        pool.connect((connErr, client, done) => {
+            client.query('select * from cards where printings is null limit 30;', (err, result) => {
+                console.log(result);
+                if (err) {
+                    response.send(`Error ${err}`);
+                } else {
+                    Promise.all(
+                        result.rows.map(row =>
+                            getData(row, {})
+                                .then((data) => {
+                                    console.log('sql', data);
+                                    updatePrintings(
+                                        data.card, data.cardId,
+                                        data.colors, data.printings, client);
+                                })
+                                .catch(dataErr => response.send(dataErr)),
+                        ),
+                    )
+                        .then(() => response.send('success'))
+                        .catch(otherErr => response.send(otherErr));
+                }
+                done();
+            });
+        });
+    });
+}
 
 module.exports = router;

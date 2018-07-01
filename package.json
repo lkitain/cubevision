@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "start-dev": "DATABASE_URL=$(heroku config:get DATABASE_URL -a cubevision) node index.js",
+    "start-dev": "NODE_ENV=dev DATABASE_URL=$(heroku config:get DATABASE_URL -a cubevision) node index.js",
     "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress",
     "lint": "eslint ui backend"
   },
