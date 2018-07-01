@@ -27,35 +27,33 @@ router.get('/', (request, response) => {
     });
 });
 
-if (process.env.NODE_ENV === 'dev') {
-    router.post('/postcube', (request, response) => {
-        console.log(request.body);
-        const pool = new pg.Pool({
-            connectionString: process.env.DATABASE_URL,
-        });
-        const cards = request.body.cards.split('\n');
-        const out = [];
-        pool.connect((connErr, client, done) => {
-            Promise.all(
-                cards.map(name => new Promise((resolve) => {
-                    findOrCreateCard(name, client, (id) => {
-                        out.push(id);
-                        resolve();
-                    });
-                })),
-            )
-                .then(() =>
-                    Promise.all(
-                        out.map(cardId => addCardToCube(request.body.name, cardId, client)),
-                    ),
-                )
-                .then(() => {
-                    done();
-                    response.json(out);
-                });
-        });
-    });
-}
+// router.post('/postcube', (request, response) => {
+//     console.log(request.body);
+//     const pool = new pg.Pool({
+//         connectionString: process.env.DATABASE_URL,
+//     });
+//     const cards = request.body.cards.split('\n');
+//     const out = [];
+//     pool.connect((connErr, client, done) => {
+//         Promise.all(
+//             cards.map(name => new Promise((resolve) => {
+//                 findOrCreateCard(name, client, (id) => {
+//                     out.push(id);
+//                     resolve();
+//                 });
+//             })),
+//         )
+//             .then(() =>
+//                 Promise.all(
+//                     out.map(cardId => addCardToCube(request.body.name, cardId, client)),
+//                 ),
+//             )
+//             .then(() => {
+//                 done();
+//                 response.json(out);
+//             });
+//     });
+// });
 
 router.get('/cards', (request, response) => {
     const pool = new pg.Pool({
