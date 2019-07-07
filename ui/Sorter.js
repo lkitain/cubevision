@@ -25,7 +25,7 @@ const Sorter = ({ onChange }) => (
                 type="checkbox"
                 onChange={e => onChange('current', e.target.checked)}
             />
-            <label htmlFor="current">Exclude Current Cube</label>
+            <label htmlFor="excludeCurrent">Exclude Current Cube</label>
             <input
                 id="excludeCurrent"
                 type="checkbox"
