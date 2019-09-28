@@ -6,30 +6,33 @@ import CardRow from './CardRow';
 import Sorter from './Sorter';
 import { colorSort, costSort, sort, isInStandard, isNotOnlineOnly } from './helper';
 import { cardType } from './propTypes';
-import { LAST_CUBE } from './consts';
+import { OUR_CUBE, LAST_CUBE, OUR_BINDER } from './consts';
 
-const CardTable = ({ sortedCards, cards, canEdit }) => (
-    <div>
-        <Sorter />
-        <div style={{ margin: 4, fontWeight: 'bold' }}>
-            {sortedCards.length} of {cards.length}
+const CardTable = ({ sortedCards, cards, cubeId }) => {
+    const canEdit = cubeId === OUR_CUBE;
+    return (
+        <div>
+            <Sorter isCurrentCube={cubeId === LAST_CUBE} />
+            <div style={{ margin: 4, fontWeight: 'bold' }}>
+                {sortedCards.length} of {cards.length}
+            </div>
+            <table>
+                <thead>
+                    <CardRow isHeader canEdit={canEdit} />
+                </thead>
+                <tbody>
+                    {sortedCards.map(card => (
+                        <CardRow
+                            key={card.card_id}
+                            card={card}
+                            canEdit={canEdit}
+                        />
+                    ))}
+                </tbody>
+            </table>
         </div>
-        <table>
-            <thead>
-                <CardRow isHeader canEdit={canEdit} />
-            </thead>
-            <tbody>
-                {sortedCards.map(card => (
-                    <CardRow
-                        key={card.card_id}
-                        card={card}
-                        canEdit={canEdit}
-                    />
-                ))}
-            </tbody>
-        </table>
-    </div>
-);
+    );
+}
 
 CardTable.defaultProps = {
     cards: [],
@@ -48,13 +51,14 @@ const mapStateToProps = (state, props) => {
     if (state.sorter.standard) {
         sortedCards = sortedCards.filter(card => !isInStandard(card));
     }
+    const filterCube = props.cubeId === LAST_CUBE ? OUR_CUBE : LAST_CUBE;
     if (state.sorter.current) {
         sortedCards = sortedCards.filter(card =>
-            state.getCubeCards[LAST_CUBE].indexOf(card.card_id) > -1);
+            state.getCubeCards[filterCube].indexOf(card.card_id) > -1);
     }
     if (state.sorter.excludeCurrent) {
         sortedCards = sortedCards.filter(card =>
-            state.getCubeCards[LAST_CUBE].indexOf(card.card_id) === -1);
+            state.getCubeCards[filterCube].indexOf(card.card_id) === -1);
     }
     if (state.sorter.sort === 'name' || state.sorter.sort === 'types') {
         sortedCards = sortedCards.sort(sort(state.sorter.sort));

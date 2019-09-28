@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import CardTable from './CardTable';
-import { OUR_CUBE } from './consts';
 import { cubeType, cardType } from './propTypes';
 
 const Cube = ({ cube, cards }) => (
     <div>
         <h2>{cube.name}</h2>
-        <CardTable cards={cards} canEdit={cube.cube_id === OUR_CUBE} />
+        <CardTable cards={cards} cubeId={cube.cube_id} />
     </div>
 );
 

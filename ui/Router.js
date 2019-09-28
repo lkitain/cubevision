@@ -23,7 +23,7 @@ const CubeRouter = () => (
                 paddingLeft: 8,
             }}
             >
-                <li><Link to={`/cube/${OUR_CUBE}`}>Current Cube</Link></li>
+                <li><Link to={`/cube/${OUR_CUBE}`}>Our Cube</Link></li>
                 <li style={styles.hideOnSmall}><Link to={`/cube/${OUR_BINDER}`}>Current Binder</Link></li>
                 <li style={styles.hideOnSmall}><Link to="/cubes">Cubes</Link></li>
                 <li><Link to="/missing">Missing</Link></li>

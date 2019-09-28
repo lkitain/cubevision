@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Radium from 'radium';
 
-const Sorter = ({ onChange }) => (
+const Sorter = ({ onChange, isCurrentCube }) => (
     <div>
         <div style={{
             display: 'flex',
@@ -19,13 +19,13 @@ const Sorter = ({ onChange }) => (
                 type="checkbox"
                 onChange={e => onChange('standard', e.target.checked)}
             />
-            <label htmlFor="current">Only Current Cube</label>
+            <label htmlFor="current">Only {isCurrentCube ? 'Our' : 'Current'} Cube</label>
             <input
                 id="current"
                 type="checkbox"
                 onChange={e => onChange('current', e.target.checked)}
             />
-            <label htmlFor="excludeCurrent">Exclude Current Cube</label>
+            <label htmlFor="excludeCurrent">Exclude {isCurrentCube ? 'Our' : 'Current'} Cube</label>
             <input
                 id="excludeCurrent"
                 type="checkbox"
@@ -86,9 +86,16 @@ const Sorter = ({ onChange }) => (
 
 Sorter.propTypes = {
     onChange: PropTypes.func.isRequired,
+    isCurrentCube: PropTypes.bool,
 };
 
-const mapStateToProps = state => state.sorter;
+Sorter.defaultProps = {
+    isCurrentCube: false,
+};
+
+const mapStateToProps = state => ({
+    sorter: state.sorter,
+});
 const mapDispatchToProps = dispatch => ({
     onChange: (sort, value) => dispatch({
         type: 'SET_SORTER',
