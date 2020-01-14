@@ -7,30 +7,34 @@ import { LAST_CUBE, OUR_BINDER } from './consts';
 import { sort } from './helper';
 import { cardType } from './propTypes';
 
-class Replacements extends React.Component {
+class Replacements extends React.PureComponent {
     constructor(props) {
         super(props);
         this.handleSave = this.handleSave.bind(this);
     }
+
     handleSave() {
+        const { cardId } = this.props;
         fetch('/api/card/replace', {
             method: 'POST',
             headers: new Headers({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 newCardId: this.cards.value,
-                oldCardId: this.props.cardId,
+                oldCardId: cardId,
             }),
         }).then((result) => {
             if (result.status === 200) {
-                this.props.replaceCard(parseInt(this.cards.value, 10), this.props.cardId);
+                this.props.replaceCard(parseInt(this.cards.value, 10), cardId);
             }
         });
     }
+
     render() {
+        const { cards } = this.props;
         return (
             <div>
-                <select ref={(cards) => { this.cards = cards; }}>
-                    {this.props.cards.map(card => (
+                <select ref={(cardList) => { this.cards = cardList; }}>
+                    {cards.map(card => (
                         <option value={card.card_id} key={card.card_id}>
                             {card.name}
                         </option>
@@ -66,8 +70,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    replaceCard: (newCardId, oldCardId) =>
-        dispatch(replaceCard(newCardId, oldCardId)),
+    replaceCard: (newCardId, oldCardId) => dispatch(replaceCard(newCardId, oldCardId)),
 });
 
 const ConnectedReplacements = connect(mapStateToProps, mapDispatchToProps)(Replacements);
