@@ -9,6 +9,7 @@ class Acquire extends React.Component {
         super(props);
         this.handleSave = this.handleSave.bind(this);
     }
+
     handleSave() {
         fetch('/api/card/acquire', {
             method: 'POST',
@@ -18,11 +19,13 @@ class Acquire extends React.Component {
             }),
         });
     }
+
     render() {
+        const { cards } = this.props;
         return (
             <div>
-                <select ref={(cards) => { this.cards = cards; }}>
-                    {this.props.cards.map(card => (
+                <select ref={(cardList) => { this.cards = cardList; }}>
+                    {cards.map(card => (
                         <option value={card.card_id} key={card.card_id}>{card.name}</option>
                     ))}
                 </select>

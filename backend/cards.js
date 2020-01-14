@@ -19,53 +19,56 @@ pg.defaults.ssl = true;
 
 function getData(row) {
     const splitName = row.name.split(' // ');
-    return Promise.all(splitName.map(cName =>
-        new Promise((resolve) => {
-            console.log(cName);
-            const data = {
-                printings: [],
-            };
-            const ev = mtg.card
-                .all({ name: cName });
-            ev.on('data', (card) => {
-                // console.log('data');
-                // // console.log(card);
-                // console.log(cName);
-                // console.log(row.name);
-                const printings = data.printings;
-                if (card.name === cName) {
-                    // console.log(card.set);
-                    const copy = {
-                        rarity: card.rarity[0],
-                        set: card.set,
-                    };
-                    if (Object.hasOwnProperty.call(card, 'multiverseid')) {
-                        copy.multiverseid = card.multiverseid;
-                    }
-                    printings.push(copy);
-                } else {
-                    return;
+    return Promise.all(splitName.map(cName => new Promise((resolve, reject) => {
+        console.log(cName);
+        const data = {
+            printings: [],
+        };
+        const ev = mtg.card
+            .all({ name: cName });
+        ev.on('data', (card) => {
+            // console.log('data');
+            // // console.log(card);
+            // console.log(cName);
+            // console.log(row.name);
+            const printings = data.printings;
+            if (card.name === cName) {
+                // console.log(card.set);
+                const copy = {
+                    rarity: card.rarity[0],
+                    set: card.set,
+                };
+                if (Object.hasOwnProperty.call(card, 'multiverseid')) {
+                    copy.multiverseid = card.multiverseid;
                 }
+                printings.push(copy);
+            } else {
+                return;
+            }
 
-                let colors = 'C';
-                if (Object.hasOwnProperty.call(card, 'colors')) {
-                    colors = card.colors.reduce((out, c) => {
-                        if (c === 'Blue') {
-                            return `${out}U`;
-                        }
-                        return `${out}${c[0]}`;
-                    }, '');
-                }
-                data.card = card;
-                data.colors = colors;
-                data.printings = printings;
-                data.cardId = row.card_id;
-            });
-            ev.on('end', () => resolve(data));
-            ev.on('err', (err) => { console.log('err', err); });
-        })))
+            let colors = 'C';
+            if (Object.hasOwnProperty.call(card, 'colors')) {
+                colors = card.colors.reduce((out, c) => {
+                    if (c === 'Blue') {
+                        return `${out}U`;
+                    }
+                    return `${out}${c[0]}`;
+                }, '');
+            }
+            data.card = card;
+            data.colors = colors;
+            data.printings = printings;
+            data.cardId = row.card_id;
+        });
+        ev.on('end', () => resolve(data));
+        ev.on('err', (err) => {
+            console.log('err', err);
+            reject(err);
+        });
+    })))
         .then((data) => {
             const outData = data[0];
+            console.log('getData data:', data);
             data.forEach((curr, i) => {
                 const colors = outData.colors.split();
                 curr.colors.split().forEach((c) => {
@@ -124,49 +127,45 @@ router.get('/', (request, response) => {
     });
 });
 
-// router.post('/setversion', (request, response) => {
-//     console.log('setversion');
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
-//     const cardId = request.body.cardId;
-//     const multiverseid = request.body.multiverseid;
-//     console.log(request.body);
-//     pool.connect((connErr, client, done) => {
-//         setVersion(cardId, multiverseid, client)
-//             .then(() => {
-//                 response.send(true);
-//                 done();
-//             })
-//             .catch((err) => {
-//                 response.send(err);
-//                 done();
-//             });
-//     });
-// });
-//
+router.post('/setversion', (request, response) => {
+    console.log('setversion');
+    const pool = new pg.Pool({
+        connectionString: process.env.DATABASE_URL,
+    });
+    const { cardId, multiverseid } = request.body;
+    console.log(request.body);
+    pool.connect((connErr, client, done) => {
+        setVersion(cardId, multiverseid, client)
+            .then(() => {
+                response.send(true);
+                done();
+            })
+            .catch((err) => {
+                response.send(err);
+                done();
+            });
+    });
+});
+
 // router.post('/acquire', (request, response) => {
 //     const pool = new pg.Pool({
 //         connectionString: process.env.DATABASE_URL,
 //     });
-//     const cardId = request.body.cardId;
-//     pool.connect((connErr, client, done) =>
-//         acquireCard(cardId, client)
-//             .then(() => {
-//                 console.log('acquired');
-//                 response.send(true);
-//                 done();
-//             }),
-//     );
+//     const { cardId } = request.body;
+//     pool.connect((connErr, client, done) => acquireCard(cardId, client)
+//         .then(() => {
+//             console.log('acquired');
+//             response.send(true);
+//             done();
+//         }));
 // });
-//
-//
+
+
 // router.post('/replace', (request, response) => {
 //     const pool = new pg.Pool({
 //         connectionString: process.env.DATABASE_URL,
 //     });
-//     const newCardId = request.body.newCardId;
-//     const oldCardId = request.body.oldCardId;
+//     const { newCardId, oldCardId } = request.body;
 //     pool.connect((connErr, client, done) => {
 //         Promise.all([
 //             checkCardInCube(newCardId, constants.OUR_BINDER, client),
@@ -190,34 +189,31 @@ router.get('/', (request, response) => {
 //             });
 //     });
 // });
-//
+
 // router.get('/update', (request, response) => {
-//     console.log('asdf');
 //     const pool = new pg.Pool({
 //         connectionString: process.env.DATABASE_URL,
 //     });
 //     pool.connect((connErr, client, done) => {
-//         client.query('select * from cards where printings is null limit 30;', (err, result) => {
+//         client.query('select * from cards where printings is null limit 2;', (err, result) => {
 //             // console.log(result);
 //             if (err) {
 //                 response.send(`Error ${err}`);
 //             } else {
 //                 Promise.all(
-//                     result.rows.map(row =>
-//                         getData(row, {})
-//                             .then((data) => {
-//                                 console.log('sql', data);
-//                                 updatePrintings(
-//                                     data.card, data.cardId,
-//                                     data.colors, data.printings, client);
-//                             })
-//                             .catch(dataErr => response.send(dataErr)),
-//                     ),
+//                     result.rows.map(row => getData(row, {})
+//                         .then(data => updatePrintings(
+//                             data.card, data.cardId,
+//                             data.colors, data.printings, client,
+//                         ))),
 //                 )
 //                     .then(() => response.send('success'))
-//                     .catch(otherErr => response.send(otherErr));
+//                     .catch((dataErr) => {
+//                         console.log('update error', dataErr);
+//                         return response.status(500).send(dataErr);
+//                     })
+//                     .finally(() => done());
 //             }
-//             done();
 //         });
 //     });
 // });

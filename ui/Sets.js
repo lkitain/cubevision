@@ -20,9 +20,9 @@ const handleSave = (cardId, multiverseid) => () =>
 const Sets = ({ printings, ownedId, cardId }) => {
     return (
         <div>
-            {printings
+            {printings && printings
                 // filter out online sets
-                .filter(set => isNotOnlineOnly(set))
+                .filter(set => isNotOnlineOnly(set) && set.multiverseid)
                 .sort((a, b) => a.multiverseid > b.multiverseid)
                 .map((set, i, arr) => (
                     <div

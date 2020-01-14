@@ -64,10 +64,10 @@ const mapStateToProps = (state, props) => {
         sortedCards = sortedCards.sort(sort(state.sorter.sort));
     } else if (state.sorter.sort === 'age') {
         sortedCards = sortedCards.sort((cardA, cardB) => {
-            const a = JSON.parse(cardA.printings).filter(set => isNotOnlineOnly(set))
+            const a = JSON.parse(cardA.printings).filter(set => isNotOnlineOnly(set) && set.multiverseid)
                 .reduce((init, set) =>
                     (init > set.multiverseid ? init : set.multiverseid), 0);
-            const b = JSON.parse(cardB.printings).filter(set => isNotOnlineOnly(set))
+            const b = JSON.parse(cardB.printings).filter(set => isNotOnlineOnly(set) && set.multiverseid)
                 .reduce((init, set) =>
                     (init > set.multiverseid ? init : set.multiverseid), 0);
             if (a > b) {

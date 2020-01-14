@@ -28,16 +28,19 @@ const CardRow = ({ card, isHeader, canEdit }) => {
                 <th>
                     Sets
                 </th>
-                {canEdit &&
-                <th style={styles.hideOnSmall}>
-                    Remove
-                </th>}
+                {canEdit && (
+                    <th style={styles.hideOnSmall}>
+                        Remove
+                    </th>
+                )}
             </tr>
         );
     }
     let backgroundColor = 'rgb(135, 110, 90)';
     let color = 'white';
-    if (card.color.length > 1) {
+    if (!card.color) {
+        //pass
+    } else if (card.color.length > 1) {
         backgroundColor = 'rgb(223, 204, 151)';
         color = 'black';
     } else if (card.color === 'G') {
@@ -72,6 +75,15 @@ const CardRow = ({ card, isHeader, canEdit }) => {
             </span>
         );
     }
+    let multiverseId = card.owned_multiverseid || card.multiverse_id;
+    const printings = JSON.parse(card.printings);
+    if (!multiverseId) {
+        printings.forEach((printing) => {
+            if (printing.multiverseid && printing.multiverseid > multiverseId) {
+                multiverseId = printing.multiverseid;
+            }
+        });
+    }
     return (
         <tr
             style={{
@@ -87,11 +99,11 @@ const CardRow = ({ card, isHeader, canEdit }) => {
                 <a
                     target="__blank"
                     rel="noopener noreferrer"
-                    href={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${card.owned_multiverseid || card.multiverse_id}&type=card`}
+                    href={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${multiverseId}&type=card`}
                 >
                     {card.owned_multiverseid ? (
                         <OwnedSet
-                            printings={JSON.parse(card.printings)}
+                            printings={printings}
                             ownedId={card.owned_multiverseid}
                             cardId={card.card_id}
                         />
@@ -101,18 +113,19 @@ const CardRow = ({ card, isHeader, canEdit }) => {
             <td style={styles.hideOnSmall}>
                 <ManaCost manaCost={card.mana_cost} />
             </td>
-            <td>{card.types.replace(',', ' ')}</td>
+            <td>{card.types ? card.types.replace(',', ' ') : 'Unknown'}</td>
             <td>
                 <Sets
-                    printings={JSON.parse(card.printings)}
+                    printings={printings}
                     ownedId={card.owned_multiverseid}
                     cardId={card.card_id}
                 />
             </td>
-            {canEdit &&
-            <th style={styles.hideOnSmall}>
-                <Replacements cardId={card.card_id} />
-            </th>}
+            {canEdit && (
+                <th style={styles.hideOnSmall}>
+                    <Replacements cardId={card.card_id} />
+                </th>
+            )}
         </tr>
     );
 };

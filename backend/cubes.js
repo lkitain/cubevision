@@ -32,7 +32,7 @@ router.get('/', (request, response) => {
 //     const pool = new pg.Pool({
 //         connectionString: process.env.DATABASE_URL,
 //     });
-//     const cards = request.body.cards.split('\n');
+//     const cards = request.body.cards.split('\n').filter(name => name.length > 0);
 //     const out = [];
 //     pool.connect((connErr, client, done) => {
 //         Promise.all(
@@ -43,11 +43,9 @@ router.get('/', (request, response) => {
 //                 });
 //             })),
 //         )
-//             .then(() =>
-//                 Promise.all(
-//                     out.map(cardId => addCardToCube(request.body.name, cardId, client)),
-//                 ),
-//             )
+//             .then(() => Promise.all(
+//                 out.map(cardId => addCardToCube(request.body.cube, cardId, client)),
+//             ))
 //             .then(() => {
 //                 done();
 //                 response.json(out);
@@ -74,7 +72,7 @@ router.get('/cards', (request, response) => {
 });
 
 router.get('/:cubeId', (request, response) => {
-    const cubeId = request.params.cubeId;
+    const { cubeId } = request.params;
     const pool = new pg.Pool({
         connectionString: process.env.DATABASE_URL,
     });
