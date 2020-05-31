@@ -99,7 +99,7 @@ const CardRow = ({ card, isHeader, canEdit }) => {
                 <a
                     target="__blank"
                     rel="noopener noreferrer"
-                    href={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${multiverseId}&type=card`}
+                    href={`https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${multiverseId}&type=card`}
                 >
                     {card.owned_multiverseid ? (
                         <OwnedSet

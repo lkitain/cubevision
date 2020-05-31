@@ -24,7 +24,7 @@ const CardImage = ({ multiverseId }) => {
         <img
             alt={multiverseId}
             style={style}
-            src={`http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${multiverseId}&type=card`}
+            src={`https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=${multiverseId}&type=card`}
         />
     );
 };

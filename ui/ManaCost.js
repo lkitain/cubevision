@@ -11,7 +11,7 @@ const ManaCost = ({ manaCost }) => {
                     <img
                         key={i} // eslint-disable-line react/no-array-index-key
                         alt={x}
-                        src={`http://gatherer.wizards.com/Handlers/Image.ashx?size=medium&name=${x}&type=symbol`}
+                        src={`https://gatherer.wizards.com/Handlers/Image.ashx?size=medium&name=${x}&type=symbol`}
                     />
                 ))}
             </div>
