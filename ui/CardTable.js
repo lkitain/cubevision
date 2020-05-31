@@ -6,44 +6,58 @@ import CardRow from './CardRow';
 import Sorter from './Sorter';
 import { colorSort, costSort, sort, isInStandard, isNotOnlineOnly } from './helper';
 import { cardType } from './propTypes';
-import { OUR_CUBE, LAST_CUBE, OUR_BINDER } from './consts';
+import { OUR_CUBE, LAST_CUBE } from './consts';
 
-const CardTable = ({ sortedCards, cards, cubeId }) => {
-    const canEdit = cubeId === OUR_CUBE;
-    return (
-        <div>
-            <Sorter isCurrentCube={cubeId === LAST_CUBE} />
-            <div style={{ margin: 4, fontWeight: 'bold' }}>
-                {sortedCards.length} of {cards.length}
+class CardTable extends React.PureComponent {
+    constructor(props) {
+        super(props);
+        this.copyBuylist = this.copyBuylist.bind(this);
+    }
+
+    copyBuylist() {
+        const { sortedCards } = this.props;
+        const list = sortedCards.map(card => `1 ${card.name}`).join('\n');
+        navigator.clipboard.writeText(list);
+    }
+
+    render() {
+        const { sortedCards, cards, cubeId } = this.props;
+        const canEdit = cubeId === OUR_CUBE;
+        return (
+            <div>
+                <Sorter isCurrentCube={cubeId === LAST_CUBE} />
+                <button type="button" onClick={this.copyBuylist}>Copy Buylist</button>
+                <div style={{ margin: 4, fontWeight: 'bold' }}>
+                    {`${sortedCards.length} of ${cards.length}`}
+                </div>
+                <table>
+                    <thead>
+                        <CardRow isHeader canEdit={canEdit} />
+                    </thead>
+                    <tbody>
+                        {sortedCards.map(card => (
+                            <CardRow
+                                key={card.card_id}
+                                card={card}
+                                canEdit={canEdit}
+                            />
+                        ))}
+                    </tbody>
+                </table>
             </div>
-            <table>
-                <thead>
-                    <CardRow isHeader canEdit={canEdit} />
-                </thead>
-                <tbody>
-                    {sortedCards.map(card => (
-                        <CardRow
-                            key={card.card_id}
-                            card={card}
-                            canEdit={canEdit}
-                        />
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+        );
+    }
 }
 
 CardTable.defaultProps = {
     cards: [],
     sortedCards: [],
-    canEdit: false,
 };
 
 CardTable.propTypes = {
     cards: PropTypes.arrayOf(cardType),
     sortedCards: PropTypes.arrayOf(cardType),
-    canEdit: PropTypes.bool,
+    cubeId: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state, props) => {
@@ -59,6 +73,9 @@ const mapStateToProps = (state, props) => {
     if (state.sorter.excludeCurrent) {
         sortedCards = sortedCards.filter(card =>
             state.getCubeCards[filterCube].indexOf(card.card_id) === -1);
+    }
+    if (state.sorter.reserved) {
+        sortedCards = sortedCards.filter(card => card.reserved);
     }
     if (state.sorter.sort === 'name' || state.sorter.sort === 'types') {
         sortedCards = sortedCards.sort(sort(state.sorter.sort));

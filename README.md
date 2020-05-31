@@ -19,3 +19,4 @@ If you are trying to update the cube, there are some things that are commented o
 ## Thanks
 
 https://andrewgioia.github.io/Keyrune/index.html
+https://magic.wizards.com/en/articles/archive/vintage-cube-cardlist

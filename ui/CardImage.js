@@ -10,13 +10,13 @@ const CardImage = ({ multiverseId }) => {
         position: 'absolute',
         top: 0,
         right: 0,
-        'z-index': 10000,
+        zIndex: 10000,
         // width:auto;
         // max-width:320px;
         // min-height:128px;
         // border:1px solid black;
         // margin-top:12px;
-        'margin-right': 43,
+        marginRight: 43,
         overflow: 'hidden',
         // padding: 8,
     };

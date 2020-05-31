@@ -14,7 +14,7 @@ class Replacements extends React.PureComponent {
     }
 
     handleSave() {
-        const { cardId } = this.props;
+        const { cardId, replaceCard } = this.props;
         fetch('/api/card/replace', {
             method: 'POST',
             headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -24,7 +24,7 @@ class Replacements extends React.PureComponent {
             }),
         }).then((result) => {
             if (result.status === 200) {
-                this.props.replaceCard(parseInt(this.cards.value, 10), cardId);
+                replaceCard(parseInt(this.cards.value, 10), cardId);
             }
         });
     }
@@ -40,7 +40,7 @@ class Replacements extends React.PureComponent {
                         </option>
                     ))}
                 </select>
-                <button onClick={this.handleSave}>Save</button>
+                <button type="button" onClick={this.handleSave}>Save</button>
             </div>
         );
     }

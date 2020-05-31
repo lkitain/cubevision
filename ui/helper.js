@@ -6,6 +6,8 @@ const standardSets = [
     'WAR',
     'M20',
     'ELD',
+    'THB',
+    'IKO',
 ];
 
 const isInStandard = card => JSON.parse(card.printings)

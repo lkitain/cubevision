@@ -59,8 +59,7 @@ const removeCardFromCube = (cubeId, cardId, client) =>
         });
     });
 
-const acquireCard = (cardId, client) =>
-    addCardToCube(constants.OUR_BINDER, cardId, client);
+const acquireCard = (cardId, client) => addCardToCube(constants.OUR_BINDER, cardId, client);
 
 const setVersion = (cardId, multiverseid, client) =>
     new Promise((resolve, reject) => {
@@ -75,25 +74,33 @@ const setVersion = (cardId, multiverseid, client) =>
         });
     });
 
-const checkCardInCube = (cardId, cubeId, client) =>
-    new Promise((resolve, reject) => {
-        const query = 'select card_id from cube_cards where card_id = $1 and cube_id = $2';
-        client.query(query, [cardId, cubeId], (err) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
+const checkCardInCube = (cardId, cubeId, client) => new Promise((resolve, reject) => {
+    const query = 'select card_id from cube_cards where card_id = $1 and cube_id = $2';
+    client.query(query, [cardId, cubeId], (err) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve();
+        }
     });
+});
 
-const updatePrintings = (card, cardId, colors, printings, client) =>
-{
-    console.log([card.cmc, card.manaCost, card.reserved || false, cardId, colors, card.types.join(','), card.multiverseid, JSON.stringify(printings)])
+const updatePrintings = (card, cardId, colors, printings, client, reserved) => {
+    const params = [
+        card.cmc,
+        card.manaCost,
+        reserved || false,
+        cardId,
+        colors,
+        card.types.join(','),
+        card.multiverseid,
+        JSON.stringify(printings),
+    ];
+    // console.log(card.name, params);
     return new Promise((resolve, reject) => {
         client.query(
             'update cards set cmc = $1, mana_cost = $2, reserved = $3, color = $5, types = $6, multiverse_id = $7, printings = $8 where card_id = $4',
-            [card.cmc, card.manaCost, card.reserved || false, cardId, colors, card.types.join(','), card.multiverseid, JSON.stringify(printings)],
+            params,
             (err) => {
                 if (err) {
                     reject(err);
@@ -102,40 +109,60 @@ const updatePrintings = (card, cardId, colors, printings, client) =>
                 }
             });
     });
-}
+};
 
-const startTransaction = client =>
-    new Promise((resolve, reject) => {
-        client.query('BEGIN', (err) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
+const reserveDB = (client, row, reserved) => {
+    if (!reserved) {
+        return;
+    }
+    const params = [
+        row.card_id,
+        reserved,
+    ];
+    console.log('updating', row, reserved);
+    return new Promise((resolve, reject) => {
+        client.query(
+            'update cards set reserved = $2 where card_id = $1',
+            params,
+            (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
     });
+};
 
-const rollbackTransaction = client =>
-    new Promise((resolve, reject) => {
-        client.query('ROLLBACK', (err) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve('rolled back');
-            }
-        });
+const startTransaction = client => new Promise((resolve, reject) => {
+    client.query('BEGIN', (err) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve();
+        }
     });
+});
 
-const commitTransaction = client =>
-    new Promise((resolve, reject) => {
-        client.query('COMMIT', (err) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve('commited');
-            }
-        });
+const rollbackTransaction = client => new Promise((resolve, reject) => {
+    client.query('ROLLBACK', (err) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve('rolled back');
+        }
     });
+});
+
+const commitTransaction = client => new Promise((resolve, reject) => {
+    client.query('COMMIT', (err) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve('commited');
+        }
+    });
+});
 
 module.exports = {
     acquireCard,
@@ -145,6 +172,7 @@ module.exports = {
     removeCardFromCube,
     setVersion,
     updatePrintings,
+    reserveDB,
 
     startTransaction,
     commitTransaction,

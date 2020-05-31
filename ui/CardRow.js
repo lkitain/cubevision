@@ -77,7 +77,7 @@ const CardRow = ({ card, isHeader, canEdit }) => {
     }
     let multiverseId = card.owned_multiverseid || card.multiverse_id;
     const printings = JSON.parse(card.printings);
-    if (!multiverseId) {
+    if (!multiverseId && printings) {
         printings.forEach((printing) => {
             if (printing.multiverseid && printing.multiverseid > multiverseId) {
                 multiverseId = printing.multiverseid;
