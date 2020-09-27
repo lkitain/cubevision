@@ -13,12 +13,14 @@ const Sorter = ({ onChange, isCurrentCube }) => (
             },
         }}
         >
-            <label htmlFor="standard">Exclude Standard</label>
-            <input
-                id="standard"
-                type="checkbox"
-                onChange={e => onChange('standard', e.target.checked)}
-            />
+            <label htmlFor="standard">
+                Exclude Standard
+                <input
+                    id="standard"
+                    type="checkbox"
+                    onChange={e => onChange('standard', e.target.checked)}
+                />
+            </label>
             <label htmlFor="current">Only {isCurrentCube ? 'Our' : 'Current'} Cube</label>
             <input
                 id="current"

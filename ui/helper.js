@@ -8,6 +8,7 @@ const standardSets = [
     'ELD',
     'THB',
     'IKO',
+    'M21',
 ];
 
 const isInStandard = card => JSON.parse(card.printings)
@@ -32,34 +33,57 @@ const getMissing = (state) => {
 const colorSortHelper = (cardA, cardB) => {
     const a = cardA.color;
     const b = cardB.color;
+    if (a === '' && b === '') {
+        if (cardA.types === cardB.types) {
+            return 0;
+        }
+        if (cardA.types.includes('Land')) {
+            return 1;
+        }
+        return -1;
+    }
     if (a === b) {
         return 0;
-    } else if (a === 'W') {
-        return -1;
-    } else if (b === 'W') {
-        return 1;
-    } else if (a === 'U') {
-        return -1;
-    } else if (b === 'U') {
-        return 1;
-    } else if (a === 'B') {
-        return -1;
-    } else if (b === 'B') {
-        return 1;
-    } else if (a === 'R') {
-        return -1;
-    } else if (b === 'R') {
-        return 1;
-    } else if (a === 'G') {
-        return -1;
-    } else if (b === 'G') {
-        return 1;
-    } else if (a === 'C') {
-        return -1;
-    } else if (b === 'C') {
+    }
+    if (a === '') {
         return 1;
     }
-    return 0;
+    if (b === '') {
+        return -1;
+    }
+
+    if (a.length > b.length) {
+        return 1;
+    }
+    if (a.length < b.length) {
+        return -1;
+    }
+
+
+    const orders = ['W', 'U', 'B', 'R', 'G', 'C'];
+
+    if (a.length > orders.length) {
+        return 0;
+    }
+    let res = 0;
+    const aArray = a.split('');
+    const bArray = b.split('');
+
+    res = orders.reduce((tmp, color) => {
+        if (tmp !== 0) {
+            return tmp;
+        }
+        for (let i = 0; i < aArray.length; i += 1) {
+            if (aArray[i] === color) {
+                return -1;
+            }
+            if (bArray[i] === color) {
+                return 1;
+            }
+        }
+        return tmp;
+    }, res);
+    return res;
 };
 
 const colorSort = (cardA, cardB) => {

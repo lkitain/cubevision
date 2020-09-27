@@ -10,12 +10,35 @@ const {
 
 pg.defaults.ssl = true;
 
-const isNotOnlineOnly = set => !(/ME[D1-4]|VMA|TPR|PZ1|PMODO/i.test(set.set));
+const isNotOnlineOnly = (set) => !(/ME[D1-4]|VMA|TPR|PZ1|PMODO/i.test(set.set));
+
+function getColors(card) {
+    if (!Object.hasOwnProperty.call(card, 'colors')) {
+        return 'C';
+    }
+    const unsortedColors = card.colors.reduce((out, c) => {
+        if (c === 'Blue') {
+            return out + ['U'];
+        }
+        return out + [c[0]];
+    }, []);
+
+    if (unsortedColors.length === 0) {
+        return '';
+    }
+    const order = ['W', 'U', 'B', 'R', 'G'];
+    return order.reduce((current, color) => {
+        if (unsortedColors.includes(color)) {
+            return `${current}${color}`;
+        }
+        return current;
+    }, '');
+}
 
 function getData(row) {
     const splitName = row.name.split(' // ');
     console.log(splitName);
-    return Promise.all(splitName.map(cName => new Promise((resolve, reject) => {
+    return Promise.all(splitName.map((cName) => new Promise((resolve, reject) => {
         const data = {
             printings: [],
         };
@@ -23,7 +46,7 @@ function getData(row) {
             .all({ name: cName });
         ev.on('data', (card) => {
             // console.log('data');
-            console.log(card);
+            // console.log(card);
             // console.log(cName);
             // console.log(row.name);
             const { printings } = data;
@@ -42,18 +65,9 @@ function getData(row) {
                 return;
             }
 
-            let colors = 'C';
-            if (Object.hasOwnProperty.call(card, 'colors')) {
-                colors = card.colors.reduce((out, c) => {
-                    if (c === 'Blue') {
-                        return `${out}U`;
-                    }
-                    return `${out}${c[0]}`;
-                }, '');
-            }
             data.card = card;
-            data.colors = colors;
-            data.printings = printings.filter(set => isNotOnlineOnly(set) && set.multiverseid);
+            data.colors = getColors(card);
+            data.printings = printings.filter((set) => isNotOnlineOnly(set) && set.multiverseid);
             data.cardId = row.card_id;
         });
         ev.on('end', () => resolve(data));
@@ -109,15 +123,15 @@ function isReserved(cardName) {
 
 function updateReserved(client) {
     return client.query('select * from cards;')
-        .then(result => Promise.all(
-            result.rows.map(row => reserveDB(client, row, isReserved(row.name))),
+        .then((result) => Promise.all(
+            result.rows.map((row) => reserveDB(client, row, isReserved(row.name))),
         ));
 }
 
 function queryPrintings(start, end, client) {
     return client.query(`select * from cards where card_id between ${start} and ${end};`)
-        .then(result => Promise.all(
-            result.rows.map(row => getData(row, {})
+        .then((result) => Promise.all(
+            result.rows.map((row) => getData(row, {})
                 .then((data) => {
                     // console.log(data.card);
                     updatePrintings(
@@ -131,11 +145,12 @@ function queryPrintings(start, end, client) {
             .catch((dataErr) => {
                 console.log('update error', dataErr);
             }))
-        .catch(err => console.log(`Error ${err}`));
+        .catch((err) => console.log(`Error ${err}`));
 }
 
 module.exports = {
     queryPrintings,
     getData,
     updateReserved,
+    isReserved,
 };
