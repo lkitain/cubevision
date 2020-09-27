@@ -1,14 +1,11 @@
 import { OUR_CUBE, OUR_BINDER } from './consts';
 
 const standardSets = [
-    'GRN',
-    'RNA',
-    'WAR',
-    'M20',
     'ELD',
     'THB',
     'IKO',
     'M21',
+    'ZNR',
 ];
 
 const isInStandard = card => JSON.parse(card.printings)
