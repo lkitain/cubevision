@@ -56,7 +56,6 @@ const colorSortHelper = (cardA, cardB) => {
         return -1;
     }
 
-
     const orders = ['W', 'U', 'B', 'R', 'G', 'C'];
 
     if (a.length > orders.length) {

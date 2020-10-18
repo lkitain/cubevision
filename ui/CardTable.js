@@ -104,7 +104,6 @@ const mapStateToProps = (state, props) => {
     };
 };
 
-
 const ConnectedCardTable = connect(mapStateToProps)(CardTable);
 
 export default ConnectedCardTable;
