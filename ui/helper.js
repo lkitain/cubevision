@@ -28,25 +28,29 @@ const getMissing = (state) => {
 };
 
 const colorSortHelper = (cardA, cardB) => {
-    const a = cardA.color;
-    const b = cardB.color;
-    if (a === '' && b === '') {
-        if (cardA.types === cardB.types) {
+    let a = cardA.color;
+    let b = cardB.color;
+
+    if (a === '') {
+        a = 'C';
+    }
+    if (b === '') {
+        b = 'C';
+    }
+
+    if (a === 'C' && b === 'C') {
+        if (cardA.types.includes('Land') && cardB.types.includes('Land')) {
             return 0;
         }
         if (cardA.types.includes('Land')) {
             return 1;
         }
-        return -1;
+        if (cardB.types.includes('Land')) {
+            return -1;
+        }
     }
     if (a === b) {
         return 0;
-    }
-    if (a === '') {
-        return 1;
-    }
-    if (b === '') {
-        return -1;
     }
 
     if (a.length > b.length) {
@@ -64,20 +68,24 @@ const colorSortHelper = (cardA, cardB) => {
     let res = 0;
     const aArray = a.split('');
     const bArray = b.split('');
+    let i = 0;
 
-    res = orders.reduce((tmp, color) => {
+    res = aArray.reduce((tmp, color) => {
         if (tmp !== 0) {
             return tmp;
         }
-        for (let i = 0; i < aArray.length; i += 1) {
-            if (aArray[i] === color) {
-                return -1;
-            }
-            if (bArray[i] === color) {
-                return 1;
-            }
+        const colorB = bArray[i];
+        let subRes = 0;
+        if (color === colorB) {
+            // pass
+        } else if (orders.indexOf(color) > orders.indexOf(colorB)) {
+            subRes = 1;
+        } else {
+            subRes = -1;
         }
-        return tmp;
+        i += 1;
+
+        return subRes;
     }, res);
     return res;
 };
