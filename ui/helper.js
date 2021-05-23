@@ -27,6 +27,13 @@ const getMissing = (state) => {
     return missingCards;
 };
 
+const missingInCube = (state, cubeId) => {
+    const missingCards = getMissing(state);
+    const cardsInCube = state.getCubeCards[cubeId] || [];
+
+    return missingCards.filter(card => cardsInCube.includes(parseInt(card, 10)));
+};
+
 const colorSortHelper = (cardA, cardB) => {
     let a = cardA.color;
     let b = cardB.color;
@@ -130,5 +137,6 @@ export {
     getMissing,
     isInStandard,
     isNotOnlineOnly,
+    missingInCube,
     sort,
 };

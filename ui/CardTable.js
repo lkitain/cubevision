@@ -7,6 +7,7 @@ import Sorter from './Sorter';
 import { colorSort, costSort, sort, isInStandard, isNotOnlineOnly } from './helper';
 import { cardType } from './propTypes';
 import { OUR_CUBE, LAST_CUBE } from './consts';
+import { missingInCube } from './helper';
 
 class CardTable extends React.PureComponent {
     constructor(props) {
@@ -76,6 +77,10 @@ const mapStateToProps = (state, props) => {
     }
     if (state.sorter.reserved) {
         sortedCards = sortedCards.filter(card => card.reserved);
+    }
+    if (state.sorter.missing) {
+        const missing = missingInCube(state, props.cubeId).map(id => parseInt(id, 10));
+        sortedCards = sortedCards.filter(card => missing.includes(card.card_id));
     }
     if (state.sorter.sort === 'name' || state.sorter.sort === 'types') {
         sortedCards = sortedCards.sort(sort(state.sorter.sort));

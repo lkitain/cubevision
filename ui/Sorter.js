@@ -39,6 +39,12 @@ const Sorter = ({ onChange, isCurrentCube }) => (
                 type="checkbox"
                 onChange={e => onChange('reserved', e.target.checked)}
             />
+            <label htmlFor="missing">Missing</label>
+            <input
+                id="missing"
+                type="checkbox"
+                onChange={e => onChange('missing', e.target.checked)}
+            />
         </div>
         <div style={{
             marginTop: 8,

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { cubeType } from './propTypes';
+import PercentComplete from './PercentComplete';
 
 const Cubes = ({ cubes }) => (
     <div>
@@ -13,6 +14,7 @@ const Cubes = ({ cubes }) => (
                     <Link to={`/cube/${cubeId}`}>
                         {cubes[cubeId].name}
                     </Link>
+                    <PercentComplete cubeId={cubeId} />
                 </li>
             ))}
         </ul>
