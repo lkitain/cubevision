@@ -4,6 +4,9 @@ import { setType } from './propTypes';
 import { SET_CODES } from './consts';
 
 const SetIcon = ({ set }) => {
+    if (!Object.hasOwnProperty.call(set, 'set')) {
+        return null;
+    }
     let setCode = set.set.toLowerCase();
     if (Object.hasOwnProperty.call(SET_CODES, setCode)) {
         setCode = SET_CODES[setCode];

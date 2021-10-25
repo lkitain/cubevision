@@ -1,9 +1,9 @@
 const constants = require('../ui/consts');
 
 const findOrCreateCard = (name, client, cb) => {
-    const query = 'select card_id from cards where name =$1';
-    console.log(name);
+    const query = 'select card_id from cards where name = $1';
     client.query(query, [name], (err, result) => {
+        console.log(name);
         if (err) {
             console.log(err);
             throw new Error(err);

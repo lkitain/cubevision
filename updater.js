@@ -1,28 +1,39 @@
-const pg = require('pg');
-const { queryPrintings, updateReserved } = require('./backend/utils');
+const { getData } = require('./backend/utils');
+const CardDB = require('./backend/card_db');
 
 const args = process.argv.slice(2);
 
 const startParam = parseInt(args[0], 10);
 const endParam = parseInt(args[1], 10);
-const STEP = 5;
+const STEP = 1;
 
-async function doUpdate(start, end) {
+function doUpdate(start, end) {
     let current = start;
     let currentEnd = end;
-    const pool = new pg.Pool({
-        connectionString: process.env.DATABASE_URL,
-    });
-    const client = await pool.connect();
+    const db = new CardDB(process.env.DATABASE_URL);
+    // await db.initialize();
     while (current < end) {
         currentEnd = current + STEP - 1;
-        console.log(current, currentEnd);
-        await updateReserved(client);
-        // await queryPrintings(current, currentEnd, client);
+        db.queryCardRange(current, currentEnd)
+            .then((result) => Promise.all(
+                result.rows.map((row) => getData(row, {})
+                    .then((data) => {
+                        console.log(data.card.name);
+                        return db.updatePrintings(
+                            data.card, data.cardId,
+                            data.colors, data.printings,
+                        );
+                    })),
+            )
+                .then(() => console.log('success'))
+                .catch((dataErr) => {
+                    console.log('update error', dataErr);
+                }))
+            .catch((err) => console.log(`Error ${err}`));
         current = currentEnd + 1;
         console.log('~~~~~~~~~~ batch:', currentEnd);
     }
-    client.release();
+    // db.release();
 }
 
 if (!Number.isNaN(startParam) && !Number.isNaN(endParam)) {

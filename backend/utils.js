@@ -37,7 +37,7 @@ function getColors(card) {
 
 function getData(row) {
     const splitName = row.name.split(' // ');
-    console.log(splitName);
+    // console.log(splitName);
     return Promise.all(splitName.map((cName) => new Promise((resolve, reject) => {
         const data = {
             printings: [],
@@ -46,11 +46,16 @@ function getData(row) {
             .all({ name: cName });
         ev.on('data', (card) => {
             // console.log('data');
-            // console.log(card);
             // console.log(cName);
             // console.log(row.name);
+            console.log(card.name);
             const { printings } = data;
-            if (card.name === cName) {
+            let tmpName = card.name;
+            if (card.name.indexOf(' // ') > 0) {
+                // some cards are only listed as the front half
+                tmpName = card.name.substr(0, card.name.indexOf(' // '));
+            }
+            if (tmpName === cName) {
                 // console.log('data: ', cName);
                 // console.log(card.set);
                 const copy = {
