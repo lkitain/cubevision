@@ -1,5 +1,5 @@
 module.exports = {
-    LAST_CUBE: 18,
+    LAST_CUBE: 23,
     OUR_CUBE: 8,
     OUR_BINDER: 9,
     SET_CODES: {
