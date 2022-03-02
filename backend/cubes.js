@@ -10,12 +10,18 @@ pg.defaults.ssl = true;
 
 const router = express.Router();
 
+function pool() {
+    return new pg.Pool({
+        connectionString: process.env.DATABASE_URL || 'postgresql://ianhook@localhost:5432/ianhook',
+        ssl: process.env.DATABASE_URL ? true : false,
+    });
+}
+
 // define the home page route
 router.get('/', (request, response) => {
-    const pool = new pg.Pool({
-        connectionString: process.env.DATABASE_URL,
-    });
-    pool.connect((connErr, client, done) => {
+    console.log(process.env.DATABASE_URL);
+    pool().connect((connErr, client, done) => {
+        console.log(connErr);
         client.query('select * from cubes;', (err, result) => {
             if (err) {
                 response.send(`Error ${err}`);
@@ -29,12 +35,9 @@ router.get('/', (request, response) => {
 
 // router.post('/postcube', (request, response) => {
 //     console.log(request.body);
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
 //     const cards = request.body.cards.split('\n').filter(name => name.length > 0);
 //     const out = [];
-//     pool.connect((connErr, client, done) => {
+//     pool().connect((connErr, client, done) => {
 //         Promise.all(
 //             cards.map(name => new Promise((resolve) => {
 //                 findOrCreateCard(name, client, (id) => {
@@ -54,17 +57,18 @@ router.get('/', (request, response) => {
 // });
 
 router.get('/cards', (request, response) => {
-    const pool = new pg.Pool({
-        connectionString: process.env.DATABASE_URL,
-    });
-    const query = 'select * from cube_cards';
-    pool.connect((connErr, client, done) => {
+    const query = 'select * from cube_card_hash';
+    pool().connect((connErr, client, done) => {
         console.log(connErr);
         client.query(query, (err, result) => {
             if (err) {
                 response.send(`Error ${err}`);
             } else {
-                response.send(result.rows);
+                const link = [];
+                result.rows.forEach((row) => row.card_ids.forEach((card_id) => {
+                    link.push({ cube_id: row.cube_id, card_id });
+                }));
+                response.send(link);
             }
             done();
         });
@@ -73,11 +77,8 @@ router.get('/cards', (request, response) => {
 
 router.get('/:cubeId', (request, response) => {
     const { cubeId } = request.params;
-    const pool = new pg.Pool({
-        connectionString: process.env.DATABASE_URL,
-    });
     const query = `select * from cube_cards join cubes using(cube_id) join cards using (card_id) where cube_id = ${cubeId};`;
-    pool.connect((connErr, client, done) => {
+    pool().connect((connErr, client, done) => {
         console.log(connErr);
         client.query(query, (err, result) => {
             if (err) {

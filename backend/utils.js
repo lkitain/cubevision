@@ -83,8 +83,9 @@ function getData(row) {
     })))
         .then((data) => {
             const outData = data[0];
-            // console.log('getData data:', data);
+            console.log('getData data:', data);
             data.forEach((curr, i) => {
+                console.log(outData)
                 const colors = outData.colors.split();
                 curr.colors.split().forEach((c) => {
                     if (colors.indexOf(c) === -1) {
@@ -153,9 +154,22 @@ function queryPrintings(start, end, client) {
         .catch((err) => console.log(`Error ${err}`));
 }
 
+function moveToHashes(newHash, client) {
+    const query = 'insert into cube_card_hash (cube_id, card_ids, hash_id, hash_divisor) values ($1, $2, $3, $4)';
+    return client.query(`select cube_id, card_id % ${newHash} as hash, array_agg(card_id) as cards from cube_cards  group by cube_id, card_id % ${newHash};`)
+        .then((result) => Promise.all(
+            result.rows.map((row) => {
+                console.log(row);
+                client.query(query, [row.cube_id, row.cards, row.hash, newHash]);
+            }),
+        ))
+        .catch((err) => console.log(`Error ${err}`));
+}
+
 module.exports = {
     queryPrintings,
     getData,
     updateReserved,
     isReserved,
+    moveToHashes,
 };

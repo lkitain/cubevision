@@ -4,10 +4,9 @@ import { connect } from 'react-redux';
 
 import CardRow from './CardRow';
 import Sorter from './Sorter';
-import { colorSort, costSort, sort, isInStandard, isNotOnlineOnly } from './helper';
+import { colorSort, costSort, sort, isInStandard, isNotOnlineOnly, missingInCube } from './helper';
 import { cardType } from './propTypes';
 import { OUR_CUBE, LAST_CUBE } from './consts';
-import { missingInCube } from './helper';
 
 class CardTable extends React.PureComponent {
     constructor(props) {

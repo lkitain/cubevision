@@ -8,7 +8,7 @@ const OwnedSet = ({ printings, ownedId }) => {
     let owned = {};
     printings
         .forEach((set) => {
-            if (set.multiverseid === ownedId) {
+            if (parseInt(set.multiverseid, 10) === ownedId) {
                 owned = set;
             }
         });

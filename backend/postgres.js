@@ -28,31 +28,87 @@ const findOrCreateCard = (name, client, cb) => {
 };
 
 const addCardToCube = (cubeId, cardId, client) => new Promise((resolve, reject) => {
-    const query = 'insert into cube_cards (cube_id, card_id) values ($1, $2)';
-    client.query(query, [cubeId, cardId], (err) => {
+    // const query = 'insert into cube_cards (cube_id, card_id) values ($1, $2)';
+    const cardInt = parseInt(cardId, 10);
+    const hash = cardInt % constants.HASH_DIVISOR;
+    const select = 'select * from cube_card_hash where cube_id = $1 and hash_divisor = $2 and hash_id = $3';
+    const update = 'update cube_card_hash set card_ids = array_append(card_ids, $4) where cube_id = $1 and hash_divisor = $2 and hash_id = $3';
+    const insert = 'insert into cube_card_hash (cube_id, card_ids, hash_id, hash_divisor) values ($1, $2, $3, $4)';
+    client.query(select, [cubeId, constants.HASH_DIVISOR, hash], (err, result) => {
+        // TODO: row does not exist
         if (err) {
             console.log(err);
-            if (err.code === '23505') {
-                // card is already a part of this cube
+            reject(err);
+        } else if (result.rows.length === 0) {
+            console.log('insert');
+            client.query(insert, [cubeId, [cardId], hash, constants.HASH_DIVISOR]).then((insertErr) => {
+                if (insertErr) {
+                    console.log(insertErr);
+                    reject(insertErr);
+                } else {
+                    console.log('added');
+                    resolve();
+                }
+            });
+        } else {
+            console.log('update');
+            if (result.rows[0].card_ids.includes(cardInt)) {
+                console.log('skipping');
                 resolve();
             } else {
-                console.log(err);
-                reject(err);
+                client.query(update, [cubeId, constants.HASH_DIVISOR, hash, cardId], (updateErr) => {
+                    if (updateErr) {
+                        console.log(updateErr);
+                        if (updateErr.code === '23505') {
+                            // card is already a part of this cube
+                            resolve();
+                        } else {
+                            console.log(updateErr);
+                            reject(updateErr);
+                        }
+                    } else {
+                        console.log('added');
+                        resolve();
+                    }
+                });
             }
-        } else {
-            console.log('added');
-            resolve();
         }
     });
 });
 
 const removeCardFromCube = (cubeId, cardId, client) => new Promise((resolve, reject) => {
-    const query = 'delete from cube_cards where cube_id = $1 and card_id = $2';
-    client.query(query, [cubeId, cardId], (err) => {
+    const select = 'select * from cube_card_hash where cube_id = $1 and hash_divisor = $2 and hash_id = $3';
+    const update = 'update cube_card_hash set card_ids = $4 where cube_id = $1 and hash_divisor = $2 and hash_id = $3';
+    const cardInt = parseInt(cardId, 10);
+    const hash = cardInt % constants.HASH_DIVISOR;
+    client.query(select, [cubeId, constants.HASH_DIVISOR, hash], (err, result) => {
+        // TODO: row does not exist
         if (err) {
+            console.log(err);
             reject(err);
+        } else if (result.rows.length === 0) {
+            console.log('not found');
+            reject();
         } else {
-            resolve();
+            console.log('update');
+            console.log(result.rows[0]);
+            const newCards = result.rows[0].card_ids.filter((v) => v !== cardInt);
+            console.log(newCards);
+            client.query(update, [cubeId, constants.HASH_DIVISOR, hash, newCards], (updateErr) => {
+                if (updateErr) {
+                    console.log(updateErr);
+                    if (updateErr.code === '23505') {
+                        // card is already a part of this cube
+                        resolve();
+                    } else {
+                        console.log(updateErr);
+                        reject(updateErr);
+                    }
+                } else {
+                    console.log('removed');
+                    resolve();
+                }
+            });
         }
     });
 });

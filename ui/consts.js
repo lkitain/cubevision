@@ -1,7 +1,8 @@
 module.exports = {
-    LAST_CUBE: 23,
+    LAST_CUBE: 24,
     OUR_CUBE: 8,
     OUR_BINDER: 9,
+    HASH_DIVISOR: 54,
     SET_CODES: {
         mps_akh: 'mp2',
         cei: 'xice',

@@ -20,12 +20,16 @@ pg.defaults.ssl = true;
 
 const router = express.Router();
 
+function pool() {
+    return new pg.Pool({
+        connectionString: process.env.DATABASE_URL || 'postgresql://ianhook@localhost:5432/ianhook',
+        ssl: process.env.DATABASE_URL ? true : false,
+    });
+}
+
 // define the home page route
 router.get('/', (request, response) => {
-    const pool = new pg.Pool({
-        connectionString: process.env.DATABASE_URL,
-    });
-    pool.connect((connErr, client, done) => {
+    pool().connect((connErr, client, done) => {
         client.query('select * from cards;', (err, result) => {
             if (err) {
                 response.send(`Error ${err}`);
@@ -39,12 +43,9 @@ router.get('/', (request, response) => {
 
 // router.post('/setversion', (request, response) => {
 //     console.log('setversion');
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
 //     const { cardId, multiverseid } = request.body;
 //     console.log(request.body);
-//     pool.connect((connErr, client, done) => {
+//     pool().connect((connErr, client, done) => {
 //         setVersion(cardId, multiverseid, client)
 //             .then(() => {
 //                 response.send(true);
@@ -58,11 +59,8 @@ router.get('/', (request, response) => {
 // });
 
 // router.post('/acquire', (request, response) => {
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
 //     const { cardId } = request.body;
-//     pool.connect((connErr, client, done) => acquireCard(cardId, client)
+//     pool().connect((connErr, client, done) => acquireCard(cardId, client)
 //         .then(() => {
 //             console.log('acquired');
 //             response.send(true);
@@ -70,13 +68,9 @@ router.get('/', (request, response) => {
 //         }));
 // });
 
-
 // router.post('/replace', (request, response) => {
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
 //     const { newCardId, oldCardId } = request.body;
-//     pool.connect((connErr, client, done) => {
+//     pool().connect((connErr, client, done) => {
 //         Promise.all([
 //             checkCardInCube(newCardId, constants.OUR_BINDER, client),
 //             checkCardInCube(oldCardId, constants.OUR_CUBE, client),
@@ -101,10 +95,7 @@ router.get('/', (request, response) => {
 // });
 
 // router.get('/update', (request, response) => {
-//     const pool = new pg.Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
-//     pool.connect((connErr, client, done) => {
+//     pool().connect((connErr, client, done) => {
 //         client.query('select * from cards where printings is null limit 2;', (err, result) => {
 //             // console.log(result);
 //             if (err) {
