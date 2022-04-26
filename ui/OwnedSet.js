@@ -6,6 +6,9 @@ import { setType } from './propTypes';
 
 const OwnedSet = ({ printings, ownedId }) => {
     let owned = {};
+    if (ownedId === -1) {
+        return <>Proxy</>;
+    }
     printings
         .forEach((set) => {
             if (parseInt(set.multiverseid, 10) === ownedId) {
