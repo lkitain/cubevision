@@ -1,5 +1,5 @@
 const pg = require('pg');
-const { moveToHashes } = require('./backend/utils');
+const { moveToHashes, moveFromHashes } = require('./backend/utils');
 const constants = require('./ui/consts');
 
 function pool() {
@@ -11,5 +11,6 @@ function pool() {
 
 pool().connect((connErr, client, done) => {
     console.log(connErr);
-    moveToHashes(constants.HASH_DIVISOR, client).then(() => done());
+    // moveToHashes(constants.HASH_DIVISOR, client).then(() => done());
+    moveFromHashes(client).then(() => done());
 });

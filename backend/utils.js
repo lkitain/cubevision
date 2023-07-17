@@ -75,8 +75,11 @@ function getData(row) {
             data.printings = printings.filter((set) => isNotOnlineOnly(set) && set.multiverseid);
             data.cardId = row.card_id;
         });
-        ev.on('end', () => resolve(data));
-        ev.on('err', (err) => {
+        ev.on('end', () => {
+            console.log('end', data);
+            resolve(data);
+        });
+        ev.on('error', (err) => {
             console.log('err', err);
             reject(err);
         });
@@ -85,7 +88,7 @@ function getData(row) {
             const outData = data[0];
             console.log('getData data:', data);
             data.forEach((curr, i) => {
-                console.log(outData)
+                console.log(curr);
                 const colors = outData.colors.split();
                 curr.colors.split().forEach((c) => {
                     if (colors.indexOf(c) === -1) {
@@ -166,10 +169,25 @@ function moveToHashes(newHash, client) {
         .catch((err) => console.log(`Error ${err}`));
 }
 
+function moveFromHashes(client) {
+    const query = 'insert into cube_cards (cube_id, card_id) values ($1, $2)';
+    return client.query('select cube_id, card_ids from cube_card_hash;')
+        .then((result) => Promise.all(
+            result.rows.map((row) => {
+                Promise.all(row.card_ids.map((cardId) => {
+                    // console.log(row.cube_id, cardId);
+                    client.query(query, [row.cube_id, cardId]);
+                }));
+            }),
+        ))
+        .catch((err) => console.log(`Error ${err}`));
+}
+
 module.exports = {
     queryPrintings,
     getData,
     updateReserved,
     isReserved,
     moveToHashes,
+    moveFromHashes,
 };

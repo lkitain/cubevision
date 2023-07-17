@@ -1,5 +1,5 @@
 module.exports = {
-    LAST_CUBE: 24,
+    LAST_CUBE: 28,
     OUR_CUBE: 8,
     OUR_BINDER: 9,
     HASH_DIVISOR: 54,

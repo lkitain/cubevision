@@ -28,6 +28,9 @@ const CardRow = ({ card, isHeader, canEdit }) => {
                 <th>
                     Sets
                 </th>
+                <th>
+                    Last Cube
+                </th>
                 {canEdit && (
                     <th style={styles.hideOnSmall}>
                         Remove
@@ -120,6 +123,9 @@ const CardRow = ({ card, isHeader, canEdit }) => {
                     ownedId={card.owned_multiverseid}
                     cardId={card.card_id}
                 />
+            </td>
+            <td>
+                {card.lastCube}
             </td>
             {canEdit && (
                 <th style={styles.hideOnSmall}>

@@ -45,6 +45,12 @@ const Sorter = ({ onChange, isCurrentCube }) => (
                 type="checkbox"
                 onChange={e => onChange('missing', e.target.checked)}
             />
+            <label htmlFor="replacements">Suggest Replacements</label>
+            <input
+                id="replacements"
+                type="checkbox"
+                onChange={e => onChange('replacements', e.target.checked)}
+            />
         </div>
         <div style={{
             marginTop: 8,
@@ -89,6 +95,15 @@ const Sorter = ({ onChange, isCurrentCube }) => (
                 Mana Cost
                 <input
                     id="cost"
+                    type="radio"
+                    name="sort"
+                    onChange={e => onChange(e.target.name, e.target.id)}
+                />
+            </label>
+            <label htmlFor="lastCube">
+                Last Cube
+                <input
+                    id="lastCube"
                     type="radio"
                     name="sort"
                     onChange={e => onChange(e.target.name, e.target.id)}

@@ -1,4 +1,4 @@
-const { getData } = require('./backend/utils');
+const { getData,  } = require('./backend/utils');
 const CardDB = require('./backend/card_db');
 
 const args = process.argv.slice(2);
@@ -23,12 +23,12 @@ function doUpdate(start, end) {
                             data.card, data.cardId,
                             data.colors, data.printings,
                         );
-                    })),
-            )
-                .then(() => console.log('success'))
-                .catch((dataErr) => {
-                    console.log('update error', dataErr);
-                }))
+                    })
+                    .catch((dataErr) => {
+                        console.log('update error', dataErr);
+                    }))
+            ))
+            .then(() => console.log('success'))
             .catch((err) => console.log(`Error ${err}`));
         current = currentEnd + 1;
         console.log('~~~~~~~~~~ batch:', currentEnd);
@@ -36,6 +36,13 @@ function doUpdate(start, end) {
     // db.release();
 }
 
+async function updateReserved() {
+    const db = new CardDB(process.env.DATABASE_URL);
+    await db.updateReservedCards();
+}
+
 if (!Number.isNaN(startParam) && !Number.isNaN(endParam)) {
     doUpdate(startParam, endParam);
 }
+
+// updateReserved();

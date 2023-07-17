@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { replaceCard } from './actions';
 import { LAST_CUBE, OUR_BINDER } from './consts';
-import { sort } from './helper';
+import { addLastCube, sort } from './helper';
 import { cardType } from './propTypes';
 
 class Replacements extends React.PureComponent {
@@ -30,13 +30,16 @@ class Replacements extends React.PureComponent {
     }
 
     render() {
-        const { cards } = this.props;
+        const { cards, oldCard } = this.props;
+        if (cards.length === 0) {
+            return null;
+        }
         return (
             <div>
                 <select ref={(cardList) => { this.cards = cardList; }}>
-                    {cards.map(card => (
+                    {cards.map((card) => (
                         <option value={card.card_id} key={card.card_id}>
-                            {card.name}
+                            {card.name} ({card.lastCube})
                         </option>
                     ))}
                 </select>
@@ -54,22 +57,47 @@ Replacements.propTypes = {
     cardId: PropTypes.number.isRequired,
     cards: PropTypes.arrayOf(cardType),
     replaceCard: PropTypes.func.isRequired,
+    oldCard: cardType.isRequired,
 };
 
-const mapStateToProps = (state) => {
+const validReplacement = (oldCard, card) => {
+    if (card.lastCube < oldCard.lastCube) {
+        return false;
+    }
+    if ((card.color.length === 0 || card.color === 'C') && (oldCard.color.length === 0 || oldCard.color === 'C') &&
+        (oldCard.types === card.types || (oldCard.types !== 'Land' && card.types !== 'Land'))) {
+        return true;
+    }
+    // if ((card.color.length === 0 || card.color === 'C') && (oldCard.color.length === 0 || oldCard.color === 'C') && oldCard.types !== 'Land' && card.types !== 'Land') {
+    //     return true;
+    // }
+    if (card.color.length === 1 && oldCard.color.length === 1 && card.color !== 'C' && card.color === oldCard.color) {
+        return true;
+    }
+    if (card.color.length >= 2 && oldCard.color.length >= 2) {
+        return true;
+    }
+    return false;
+};
+
+const mapStateToProps = (state, props) => {
     let cards = [];
+    const oldCard = addLastCube(state.getCards[props.cardId], state);
+    const suggestReplacements = state.sorter.replacements;
+    const sorter = suggestReplacements ? sort('lastCube', true) : sort();
     if (Object.hasOwnProperty.call(state.getCubeCards, OUR_BINDER)) {
         cards = state.getCubeCards[OUR_BINDER]
-            .filter(binderId => state.getCubeCards[LAST_CUBE].indexOf(binderId) > -1)
-            .map(cardId => state.getCards[cardId])
-            .sort(sort());
+            .map((cardId) => addLastCube(state.getCards[cardId], state))
+            .filter((card) => card.lastCube > 0 && (!suggestReplacements || validReplacement(oldCard, card)))
+            .sort(sorter);
     }
     return ({
+        oldCard,
         cards,
     });
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
     replaceCard: (newCardId, oldCardId) => dispatch(replaceCard(newCardId, oldCardId)),
 });
 

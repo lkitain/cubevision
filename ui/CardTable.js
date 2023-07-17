@@ -61,7 +61,17 @@ CardTable.propTypes = {
 };
 
 const mapStateToProps = (state, props) => {
-    let sortedCards = props.cards.filter(card => card);
+    let sortedCards = props.cards.filter(card => card).map((card) => {
+        const cubes = Object.keys(state.getCubeCards).filter((cubeId) => {
+            if (cubeId === '8' || cubeId === '9') {
+                return false;
+            }
+            const cube = state.getCubeCards[cubeId];
+            return cube.indexOf(card.card_id) >= 0;
+        });
+        const lastCube = Math.max(...cubes.map(c => parseInt(c, 10)));
+        return { ...card, lastCube };
+    });
     if (state.sorter.standard) {
         sortedCards = sortedCards.filter(card => !isInStandard(card));
     }
@@ -83,6 +93,15 @@ const mapStateToProps = (state, props) => {
     }
     if (state.sorter.sort === 'name' || state.sorter.sort === 'types') {
         sortedCards = sortedCards.sort(sort(state.sorter.sort));
+    } else if (state.sorter.sort === 'lastCube') {
+        sortedCards = sortedCards.sort((a, b) => {
+            if (a.lastCube > b.lastCube) {
+                return -1;
+            } else if (a.lastCube < b.lastCube) {
+                return 1;
+            }
+            return 0;
+        });
     } else if (state.sorter.sort === 'age') {
         sortedCards = sortedCards.sort((cardA, cardB) => {
             const a = JSON.parse(cardA.printings).filter(set => isNotOnlineOnly(set) && set.multiverseid)

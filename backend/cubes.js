@@ -57,18 +57,13 @@ router.get('/', (request, response) => {
 // });
 
 router.get('/cards', (request, response) => {
-    const query = 'select * from cube_card_hash';
+    const query = 'select * from cube_cards';
     pool().connect((connErr, client, done) => {
-        console.log(connErr);
         client.query(query, (err, result) => {
             if (err) {
                 response.send(`Error ${err}`);
             } else {
-                const link = [];
-                result.rows.forEach((row) => row.card_ids.forEach((card_id) => {
-                    link.push({ cube_id: row.cube_id, card_id });
-                }));
-                response.send(link);
+                response.send(result.rows);
             }
             done();
         });

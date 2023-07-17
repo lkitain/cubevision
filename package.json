@@ -3,7 +3,7 @@
   "version": "0.2.6",
   "description": "A sample Node.js app using Express 4",
   "engines": {
-    "node": "10.x"
+    "node": "20.x"
   },
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "start-dev": "NODE_ENV=dev DATABASE_URL=$(heroku config:get DATABASE_URL -a cubevision) node index.js",
     "start-local": "NODE_ENV=dev node index.js",
     "updater": "NODE_ENV=dev DATABASE_URL=$(heroku config:get DATABASE_URL -a cubevision) node updater.js",
-    "cube-list": "NODE_ENV=dev DATABASE_URL=$(heroku config:get DATABASE_URL -a cubevision) node cube_list.js",
+    "cube-list": "NODE_ENV=dev node cube_list.js",
     "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress",
     "lint": "eslint ui backend",
     "watch": "webpack  --config ./webpack.config.js --progress -w"
@@ -30,13 +30,13 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "express": "4.16.1",
+    "express": "^4.18.2",
     "express-https-redirect": "^1.0.0",
     "isomorphic-fetch": "^3.0.0",
-    "mtgsdk": "^0.4.3",
+    "mtgsdk": "^0.2.0",
     "node-fetch": "^2.6.5",
     "node-html-parser": "^1.4.9",
-    "pg": "^7.18.2",
+    "pg": "^8.11.0",
     "prop-types": "^15.6.1",
     "radium": "^0.19.6",
     "react": "^16.14.0",
@@ -46,7 +46,7 @@
     "react-router-dom": "^5.3.0",
     "redux": "^4.1.1",
     "redux-thunk": "^2.2.0",
-    "webpack": "^3.11.0"
+    "webpack": "^5.83.1"
   },
   "repository": {
     "type": "git",
@@ -57,5 +57,8 @@
     "heroku",
     "express"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "webpack-cli": "^5.1.4"
+  }
 }
