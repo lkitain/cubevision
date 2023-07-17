@@ -8,7 +8,7 @@ const ManaCost = ({ manaCost }) => {
         return (
             <div style={{ whiteSpace: 'nowrap' }}>
                 {symbols.map((x, i) => {
-                    if (x === ' / ') {
+                    if (x === ' / '  || x === '  ') {
                         return ' // ';
                     }
                     return (
