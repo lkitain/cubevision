@@ -24,7 +24,7 @@ const app = express();
 
 app.set('port', (process.env.PORT || 5000));
 
-app.use('/', httpsRedirect());
+// app.use('/', httpsRedirect());
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
