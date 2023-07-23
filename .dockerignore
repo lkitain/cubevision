@@ -1,0 +1,8 @@
+node_modules
+*.sql
+*.dump*
+*.log
+public/bundle.js*
+data/
+.DS_Store
+.git

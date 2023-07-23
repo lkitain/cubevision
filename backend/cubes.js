@@ -13,7 +13,7 @@ const router = express.Router();
 function pool() {
     return new pg.Pool({
         connectionString: process.env.DATABASE_URL || 'postgresql://ianhook@localhost:5432/ianhook',
-        ssl: process.env.DATABASE_URL ? true : false,
+        ssl: false,
     });
 }
 
