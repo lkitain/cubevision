@@ -4,8 +4,7 @@ import { OUR_CUBE, OUR_BINDER } from './consts';
 const getCubes = (cubes = {}, action) => {
     switch (action.type) {
     case 'RECEIVE_CUBES':
-        return action.cubes.reduce((init, cube) =>
-            Object.assign(init, { [cube.cube_id]: cube }), {});
+        return action.cubes.reduce((init, cube) => ({ ...init, [cube.cube_id]: cube }));
     default:
         return cubes;
     }
@@ -14,8 +13,7 @@ const getCubes = (cubes = {}, action) => {
 const getCards = (cards = {}, action) => {
     switch (action.type) {
     case 'RECEIVE_CARDS':
-        return action.cards.reduce((init, card) =>
-            Object.assign(init, { [card.card_id]: card }), {});
+        return action.cards.reduce((init, card) => ({ ...init, [card.card_id]: card }));
     default:
         return cards;
     }
@@ -25,8 +23,9 @@ const getCubeCards = (cards = {}, action) => {
     let outCards;
     switch (action.type) {
     case 'RECEIVE_CUBE_CARDS':
+        // eslint-disable-next-line camelcase
         return action.cubes.reduce((init, { card_id, cube_id }) => {
-            const ret = Object.assign({}, init);
+            const ret = { ...init };
             if (!Object.hasOwnProperty.call(ret, cube_id)) {
                 ret[cube_id] = [];
             }
@@ -34,7 +33,7 @@ const getCubeCards = (cards = {}, action) => {
             return ret;
         }, {});
     case 'REPLACE_CARD':
-        outCards = Object.assign({}, cards);
+        outCards = { ...cards };
         outCards[OUR_CUBE][cards[OUR_CUBE].indexOf(action.oldCardId)] = action.newCardId;
         outCards[OUR_BINDER][cards[OUR_BINDER].indexOf(action.newCardId)] = action.oldCardId;
         return outCards;
@@ -48,7 +47,7 @@ const sorter = (sortings = {
 }, action) => {
     switch (action.type) {
     case 'SET_SORTER':
-        return Object.assign({}, sortings, action.data);
+        return { ...sortings, ...action.data };
     default:
         return sortings;
     }

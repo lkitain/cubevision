@@ -41,9 +41,7 @@ const CardRow = ({ card, isHeader, canEdit }) => {
     }
     let backgroundColor = 'rgb(135, 110, 90)';
     let color = 'white';
-    if (!card.color) {
-        //pass
-    } else if (card.color.length > 1) {
+    if (card.color.length > 1) {
         backgroundColor = 'rgb(223, 204, 151)';
         color = 'black';
     } else if (card.color === 'G') {
@@ -96,7 +94,7 @@ const CardRow = ({ card, isHeader, canEdit }) => {
             }}
         >
             <td style={{ fontWeight: 'bold' }}>
-                {card.name} {reserved}
+                { ` ${card.name} ${reserved}` }
             </td>
             <td style={styles.hideOnSmall}>
                 <a

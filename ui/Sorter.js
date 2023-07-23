@@ -18,39 +18,49 @@ const Sorter = ({ onChange, isCurrentCube }) => (
                 <input
                     id="standard"
                     type="checkbox"
-                    onChange={e => onChange('standard', e.target.checked)}
+                    onChange={(e) => onChange('standard', e.target.checked)}
                 />
             </label>
-            <label htmlFor="current">Only {isCurrentCube ? 'Our' : 'Current'} Cube</label>
-            <input
-                id="current"
-                type="checkbox"
-                onChange={e => onChange('current', e.target.checked)}
-            />
-            <label htmlFor="excludeCurrent">Exclude {isCurrentCube ? 'Our' : 'Current'} Cube</label>
-            <input
-                id="excludeCurrent"
-                type="checkbox"
-                onChange={e => onChange('excludeCurrent', e.target.checked)}
-            />
-            <label htmlFor="reserved">Only Reserved</label>
-            <input
-                id="reserved"
-                type="checkbox"
-                onChange={e => onChange('reserved', e.target.checked)}
-            />
-            <label htmlFor="missing">Missing</label>
-            <input
-                id="missing"
-                type="checkbox"
-                onChange={e => onChange('missing', e.target.checked)}
-            />
-            <label htmlFor="replacements">Suggest Replacements</label>
-            <input
-                id="replacements"
-                type="checkbox"
-                onChange={e => onChange('replacements', e.target.checked)}
-            />
+            <label htmlFor="current">
+                { `Only ${isCurrentCube ? 'Our' : 'Current'} Cube` }
+                <input
+                    id="current"
+                    type="checkbox"
+                    onChange={(e) => onChange('current', e.target.checked)}
+                />
+            </label>
+            <label htmlFor="excludeCurrent">
+                { `Exclude ${isCurrentCube ? 'Our' : 'Current'} Cube` }
+                <input
+                    id="excludeCurrent"
+                    type="checkbox"
+                    onChange={(e) => onChange('excludeCurrent', e.target.checked)}
+                />
+            </label>
+            <label htmlFor="reserved">
+                Only Reserved
+                <input
+                    id="reserved"
+                    type="checkbox"
+                    onChange={(e) => onChange('reserved', e.target.checked)}
+                />
+            </label>
+            <label htmlFor="missing">
+                Missing
+                <input
+                    id="missing"
+                    type="checkbox"
+                    onChange={(e) => onChange('missing', e.target.checked)}
+                />
+            </label>
+            <label htmlFor="replacements">
+                Suggest Replacements
+                <input
+                    id="replacements"
+                    type="checkbox"
+                    onChange={(e) => onChange('replacements', e.target.checked)}
+                />
+            </label>
         </div>
         <div style={{
             marginTop: 8,
@@ -61,34 +71,40 @@ const Sorter = ({ onChange, isCurrentCube }) => (
             },
         }}
         >
-            <label htmlFor="color">Color</label>
-            <input
-                id="color"
-                type="radio"
-                name="sort"
-                onChange={e => onChange(e.target.name, e.target.id)}
-            />
-            <label htmlFor="name">Name</label>
-            <input
-                id="name"
-                type="radio"
-                name="sort"
-                onChange={e => onChange(e.target.name, e.target.id)}
-            />
-            <label htmlFor="types">Types</label>
-            <input
-                id="types"
-                type="radio"
-                name="sort"
-                onChange={e => onChange(e.target.name, e.target.id)}
-            />
+            <label htmlFor="color">
+                Color
+                <input
+                    id="color"
+                    type="radio"
+                    name="sort"
+                    onChange={(e) => onChange(e.target.name, e.target.id)}
+                />
+            </label>
+            <label htmlFor="name">
+                Name
+                <input
+                    id="name"
+                    type="radio"
+                    name="sort"
+                    onChange={(e) => onChange(e.target.name, e.target.id)}
+                />
+            </label>
+            <label htmlFor="types">
+                Types
+                <input
+                    id="types"
+                    type="radio"
+                    name="sort"
+                    onChange={(e) => onChange(e.target.name, e.target.id)}
+                />
+            </label>
             <label htmlFor="age">
                 Age(?)
                 <input
                     id="age"
                     type="radio"
                     name="sort"
-                    onChange={e => onChange(e.target.name, e.target.id)}
+                    onChange={(e) => onChange(e.target.name, e.target.id)}
                 />
             </label>
             <label htmlFor="cost">
@@ -97,7 +113,7 @@ const Sorter = ({ onChange, isCurrentCube }) => (
                     id="cost"
                     type="radio"
                     name="sort"
-                    onChange={e => onChange(e.target.name, e.target.id)}
+                    onChange={(e) => onChange(e.target.name, e.target.id)}
                 />
             </label>
             <label htmlFor="lastCube">
@@ -106,7 +122,7 @@ const Sorter = ({ onChange, isCurrentCube }) => (
                     id="lastCube"
                     type="radio"
                     name="sort"
-                    onChange={e => onChange(e.target.name, e.target.id)}
+                    onChange={(e) => onChange(e.target.name, e.target.id)}
                 />
             </label>
         </div>
@@ -122,10 +138,10 @@ Sorter.defaultProps = {
     isCurrentCube: false,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     sorter: state.sorter,
 });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
     onChange: (sort, value) => dispatch({
         type: 'SET_SORTER',
         data: {

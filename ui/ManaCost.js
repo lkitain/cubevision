@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 const ManaCost = ({ manaCost }) => {
     if (manaCost !== '' && manaCost !== null) {
         const re = /{([0-9/WRGBUCXP]+)}/;
-        const symbols = manaCost.split(re).filter(x => x !== '').map(y => y.replaceAll('/', ''));
+        const symbols = manaCost.split(re).filter((x) => x !== '').map((y) => y.replaceAll('/', ''));
         return (
             <div style={{ whiteSpace: 'nowrap' }}>
                 {symbols.map((x, i) => {
-                    if (x === ' / '  || x === '  ') {
+                    if (x === ' / ' || x === '  ') {
                         return ' // ';
                     }
                     return (

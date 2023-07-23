@@ -11,21 +11,21 @@ const standardSets = [
     'SNC',
 ];
 
-const isInStandard = card => JSON.parse(card.printings)
+const isInStandard = (card) => JSON.parse(card.printings)
     .reduce((init, set) => init || standardSets.indexOf(set.set) !== -1, false);
 
-const isNotOnlineOnly = set => !(/ME[D1-4]|VMA|TPR|PZ1|PMODO/i.test(set.set));
+const isNotOnlineOnly = (set) => !(/ME[D1-4]|VMA|TPR|PZ1|PMODO/i.test(set.set));
 
 const getMissing = (state) => {
     let ownedCards = [];
     let missingCards = [];
-    if (Object.hasOwnProperty.call(state.getCubeCards, OUR_CUBE) &&
-        Object.hasOwnProperty.call(state.getCubeCards, OUR_BINDER)
+    if (Object.hasOwnProperty.call(state.getCubeCards, OUR_CUBE)
+        && Object.hasOwnProperty.call(state.getCubeCards, OUR_BINDER)
     ) {
         ownedCards = state.getCubeCards[OUR_BINDER]
             .concat(state.getCubeCards[OUR_CUBE]);
         missingCards = Object.keys(state.getCards)
-            .filter(card => !ownedCards.includes(parseInt(card, 10)));
+            .filter((card) => !ownedCards.includes(parseInt(card, 10)));
     }
     return missingCards;
 };
@@ -34,7 +34,7 @@ const missingInCube = (state, cubeId) => {
     const missingCards = getMissing(state);
     const cardsInCube = state.getCubeCards[cubeId] || [];
 
-    return missingCards.filter(card => cardsInCube.includes(parseInt(card, 10)));
+    return missingCards.filter((card) => cardsInCube.includes(parseInt(card, 10)));
 };
 
 const colorSortHelper = (cardA, cardB) => {
@@ -100,19 +100,12 @@ const colorSortHelper = (cardA, cardB) => {
     return res;
 };
 
-const colorSort = (cardA, cardB) => {
-    const colorSorting = colorSortHelper(cardA, cardB);
-    if (colorSorting !== 0) {
-        return colorSorting;
-    }
-    return sort('name')(cardA, cardB);
-};
-
 const sort = (field = 'name', directionIn = false) => (a, b) => {
     const direction = directionIn ? 1 : -1;
     if (a[field] < b[field]) {
         return direction;
-    } else if (a[field] > b[field]) {
+    }
+    if (a[field] > b[field]) {
         return direction * -1;
     }
     if (field !== 'name') {
@@ -121,12 +114,21 @@ const sort = (field = 'name', directionIn = false) => (a, b) => {
     return 0;
 };
 
+const colorSort = (cardA, cardB) => {
+    const colorSorting = colorSortHelper(cardA, cardB);
+    if (colorSorting !== 0) {
+        return colorSorting;
+    }
+    return sort('name')(cardA, cardB);
+};
+
 const costSort = (cardA, cardB) => {
     const returnValue = colorSortHelper(cardA, cardB);
     if (returnValue === 0) {
         if (cardA.cmc === cardB.cmc) {
             return sort('name')(cardA, cardB);
-        } else if (cardA.cmc > cardB.cmc) {
+        }
+        if (cardA.cmc > cardB.cmc) {
             return 1;
         }
         return -1;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { replaceCard } from './actions';
-import { LAST_CUBE, OUR_BINDER } from './consts';
+import { OUR_BINDER } from './consts';
 import { addLastCube, sort } from './helper';
 import { cardType } from './propTypes';
 
@@ -14,7 +14,7 @@ class Replacements extends React.PureComponent {
     }
 
     handleSave() {
-        const { cardId, replaceCard } = this.props;
+        const { cardId, doReplaceCard } = this.props;
         fetch('/api/card/replace', {
             method: 'POST',
             headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -24,13 +24,13 @@ class Replacements extends React.PureComponent {
             }),
         }).then((result) => {
             if (result.status === 200) {
-                replaceCard(parseInt(this.cards.value, 10), cardId);
+                doReplaceCard(parseInt(this.cards.value, 10), cardId);
             }
         });
     }
 
     render() {
-        const { cards, oldCard } = this.props;
+        const { cards } = this.props;
         if (cards.length === 0) {
             return null;
         }
@@ -39,7 +39,7 @@ class Replacements extends React.PureComponent {
                 <select ref={(cardList) => { this.cards = cardList; }}>
                     {cards.map((card) => (
                         <option value={card.card_id} key={card.card_id}>
-                            {card.name} ({card.lastCube})
+                            { `${card.name} (${card.lastCube})` }
                         </option>
                     ))}
                 </select>
@@ -56,7 +56,8 @@ Replacements.defaultProps = {
 Replacements.propTypes = {
     cardId: PropTypes.number.isRequired,
     cards: PropTypes.arrayOf(cardType),
-    replaceCard: PropTypes.func.isRequired,
+    doReplaceCard: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     oldCard: cardType.isRequired,
 };
 
@@ -64,14 +65,13 @@ const validReplacement = (oldCard, card) => {
     if (card.lastCube < oldCard.lastCube) {
         return false;
     }
-    if ((card.color.length === 0 || card.color === 'C') && (oldCard.color.length === 0 || oldCard.color === 'C') &&
-        (oldCard.types === card.types || (oldCard.types !== 'Land' && card.types !== 'Land'))) {
+    if ((card.color.length === 0 || card.color === 'C')
+        && (oldCard.color.length === 0 || oldCard.color === 'C')
+        && (oldCard.types === card.types || (oldCard.types !== 'Land' && card.types !== 'Land'))) {
         return true;
     }
-    // if ((card.color.length === 0 || card.color === 'C') && (oldCard.color.length === 0 || oldCard.color === 'C') && oldCard.types !== 'Land' && card.types !== 'Land') {
-    //     return true;
-    // }
-    if (card.color.length === 1 && oldCard.color.length === 1 && card.color !== 'C' && card.color === oldCard.color) {
+    if (card.color.length === 1 && oldCard.color.length === 1
+        && card.color !== 'C' && card.color === oldCard.color) {
         return true;
     }
     if (card.color.length >= 2 && oldCard.color.length >= 2) {
@@ -88,7 +88,8 @@ const mapStateToProps = (state, props) => {
     if (Object.hasOwnProperty.call(state.getCubeCards, OUR_BINDER)) {
         cards = state.getCubeCards[OUR_BINDER]
             .map((cardId) => addLastCube(state.getCards[cardId], state))
-            .filter((card) => card.lastCube > 0 && (!suggestReplacements || validReplacement(oldCard, card)))
+            .filter((card) => card.lastCube > 0
+                && (!suggestReplacements || validReplacement(oldCard, card)))
             .sort(sorter);
     }
     return ({
@@ -98,7 +99,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    replaceCard: (newCardId, oldCardId) => dispatch(replaceCard(newCardId, oldCardId)),
+    doReplaceCard: (newCardId, oldCardId) => dispatch(replaceCard(newCardId, oldCardId)),
 });
 
 const ConnectedReplacements = connect(mapStateToProps, mapDispatchToProps)(Replacements);
